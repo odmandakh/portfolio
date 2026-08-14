@@ -162,7 +162,7 @@ export const CertificatesView: React.FC = () => {
         </div>
 
         {/* Finder Content Canvas */}
-        <div className="flex-1 bg-[#18181a] p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 bg-[#002b36] p-4 sm:p-6 overflow-y-auto custom-scrollbar">
           {viewMode === 'grid' ? (
             /* Grid View */
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -170,25 +170,25 @@ export const CertificatesView: React.FC = () => {
                 <div
                   key={cert.id}
                   onClick={() => setSelectedCert(cert)}
-                  className="group flex flex-col items-center text-center p-3 rounded-xl hover:bg-white/5 transition-all cursor-pointer space-y-2 border border-transparent hover:border-zinc-800"
+                  className="group flex flex-col items-center text-center p-3 rounded-xl hover:bg-[#073642]/60 transition-all cursor-pointer space-y-2 border border-transparent hover:border-[#2aa198]/30"
                 >
                   <div className="relative">
-                    <div className="w-16 h-20 rounded-xl bg-zinc-900 border border-zinc-800 p-2 flex flex-col justify-between items-center group-hover:scale-105 group-hover:border-zinc-700 transition-transform shadow-md">
-                      <FileText className="w-8 h-8 text-zinc-300" />
-                      <span className="text-[8px] font-mono font-bold text-zinc-400 uppercase truncate w-full text-center">
+                    <div className="w-16 h-20 rounded-xl bg-[#073642] border border-[#2aa198]/30 p-2 flex flex-col justify-between items-center group-hover:scale-105 group-hover:border-[#2aa198]/60 transition-transform shadow-md">
+                      <FileText className="w-8 h-8 text-[#b58900]" />
+                      <span className="text-[8px] font-mono font-bold text-[#2aa198] uppercase truncate w-full text-center">
                         {cert.issuer}
                       </span>
                     </div>
-                    <span className="absolute -top-1 -right-1 p-0.5 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700 shadow">
+                    <span className="absolute -top-1 -right-1 p-0.5 rounded-full bg-[#002b36] text-[#859900] border border-[#2aa198]/30 shadow">
                       <ShieldCheck className="w-3 h-3" />
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="text-xs font-bold text-white group-hover:text-zinc-200 line-clamp-2">
+                    <h3 className="text-xs font-bold text-[#eee8d5] group-hover:text-[#2aa198] transition-colors line-clamp-2">
                       {cert.title}
                     </h3>
-                    <p className="text-[10px] text-zinc-400 font-mono mt-0.5">
+                    <p className="text-[10px] text-[#839496] font-mono mt-0.5">
                       {cert.issueDate}
                     </p>
                   </div>
@@ -197,8 +197,8 @@ export const CertificatesView: React.FC = () => {
             </div>
           ) : (
             /* List View */
-            <div className="bg-zinc-900/80 rounded-xl border border-zinc-800 overflow-hidden divide-y divide-zinc-800 text-xs">
-              <div className="grid grid-cols-12 px-4 py-2 bg-zinc-800/80 text-[10px] font-bold uppercase tracking-wider text-zinc-400 font-mono">
+            <div className="bg-[#073642]/60 rounded-xl border border-[#2aa198]/30 overflow-hidden divide-y divide-[#2aa198]/20 text-xs">
+              <div className="grid grid-cols-12 px-4 py-2 bg-[#073642] text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono">
                 <span className="col-span-5">Certificate Name</span>
                 <span className="col-span-3">Issuer</span>
                 <span className="col-span-2">Issue Date</span>
@@ -209,20 +209,20 @@ export const CertificatesView: React.FC = () => {
                 <div
                   key={cert.id}
                   onClick={() => setSelectedCert(cert)}
-                  className="grid grid-cols-12 px-4 py-3 items-center hover:bg-white/5 transition-colors cursor-pointer text-zinc-200"
+                  className="grid grid-cols-12 px-4 py-3 items-center hover:bg-[#002b36]/60 transition-colors cursor-pointer text-[#eee8d5]"
                 >
                   <div className="col-span-5 flex items-center space-x-2 font-semibold">
-                    <FileText className="w-4 h-4 text-zinc-400 shrink-0" />
+                    <FileText className="w-4 h-4 text-[#b58900] shrink-0" />
                     <span className="truncate">{cert.title}</span>
                   </div>
-                  <div className="col-span-3 text-zinc-300 font-medium truncate">
+                  <div className="col-span-3 text-[#2aa198] font-medium truncate">
                     {cert.issuer}
                   </div>
-                  <div className="col-span-2 font-mono text-[11px] text-zinc-400">
+                  <div className="col-span-2 font-mono text-[11px] text-[#839496]">
                     {cert.issueDate}
                   </div>
                   <div className="col-span-2 text-right font-mono text-[10px]">
-                    <span className="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold">
+                    <span className="px-2 py-0.5 rounded bg-[#002b36] text-[#859900] border border-[#2aa198]/30 font-bold">
                       Verified
                     </span>
                   </div>
@@ -232,7 +232,7 @@ export const CertificatesView: React.FC = () => {
           )}
 
           {filteredCerts.length === 0 && (
-            <div className="p-12 text-center text-zinc-500 text-xs font-mono">
+            <div className="p-12 text-center text-[#586e75] text-xs font-mono">
               No certificates match your filter criteria.
             </div>
           )}
@@ -242,59 +242,59 @@ export const CertificatesView: React.FC = () => {
       {/* QuickLook Inspection Overlay */}
       {selectedCert && (
         <div 
-          className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-[#002b36]/80 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setSelectedCert(null)}
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-2xl p-6 shadow-2xl space-y-5 text-zinc-100 relative font-sans"
+            className="w-full max-w-lg bg-[#073642] border border-[#2aa198]/40 rounded-2xl p-6 shadow-2xl space-y-5 text-[#eee8d5] relative font-sans"
           >
             <button
               onClick={() => setSelectedCert(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 rounded-xl bg-[#002b36] hover:bg-[#002b36]/80 text-[#839496] hover:text-[#eee8d5] transition-colors cursor-pointer border border-[#2aa198]/30"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div className="flex items-center space-x-3">
-              <div className="p-3 rounded-2xl bg-zinc-800 border border-zinc-700 text-zinc-200">
-                <Award className="w-8 h-8" />
+              <div className="p-3 rounded-2xl bg-[#002b36] border border-[#2aa198]/40 text-[#b58900]">
+                <Award className="w-8 h-8 text-[#b58900]" />
               </div>
               <div>
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block font-mono">
+                <span className="text-[10px] font-bold text-[#2aa198] uppercase tracking-wider block font-mono">
                   Verified Credential
                 </span>
-                <h2 className="text-xl font-black text-white tracking-tight">
+                <h2 className="text-xl font-black text-[#eee8d5] tracking-tight">
                   {selectedCert.title}
                 </h2>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2 text-xs font-mono">
+            <div className="p-4 rounded-xl bg-[#002b36] border border-[#2aa198]/30 space-y-2 text-xs font-mono">
               <div className="flex justify-between">
-                <span className="text-zinc-500">Issuer:</span>
-                <span className="text-white font-semibold">{selectedCert.issuer}</span>
+                <span className="text-[#586e75]">Issuer:</span>
+                <span className="text-[#eee8d5] font-semibold">{selectedCert.issuer}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Issue Date:</span>
-                <span className="text-white">{selectedCert.issueDate}</span>
+                <span className="text-[#586e75]">Issue Date:</span>
+                <span className="text-[#eee8d5]">{selectedCert.issueDate}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500">Credential ID:</span>
-                <span className="text-zinc-300 font-bold">{selectedCert.credentialId}</span>
+                <span className="text-[#586e75]">Credential ID:</span>
+                <span className="text-[#2aa198] font-bold">{selectedCert.credentialId}</span>
               </div>
             </div>
 
-            <p className="text-xs text-zinc-300 leading-relaxed font-sans">
+            <p className="text-xs text-[#93a1a1] leading-relaxed font-sans">
               {selectedCert.description}
             </p>
 
-            <div className="pt-3 border-t border-zinc-800 flex justify-end">
+            <div className="pt-3 border-t border-[#2aa198]/20 flex justify-end">
               <a
                 href={selectedCert.verifyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 rounded-xl bg-zinc-100 hover:bg-white text-xs font-bold text-zinc-900 flex items-center space-x-2 shadow-md transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#2aa198] hover:bg-[#2aa198]/90 text-xs font-bold text-[#002b36] flex items-center space-x-2 shadow-md transition-colors cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4" />
                 <span>Verify Credential Online</span>

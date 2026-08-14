@@ -21,7 +21,8 @@ export interface ProfileData {
 export interface Project {
   id: string;
   title: string;
-  category: 'Professional' | 'Personal' | 'Open Source';
+  category: string;
+  tag: string;
   shortDescription: string;
   fullDescription: string;
   technologies: string[];

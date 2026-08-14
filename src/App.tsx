@@ -38,7 +38,7 @@ export default function App() {
     const item = desktopItems.find(i => i.id === activeWindow);
     return {
       title: item ? item.title : 'Desktop',
-      subtitle: item ? item.description : undefined
+      subtitle: item && item.description !== item.title ? item.description : undefined
     };
   };
 

@@ -122,7 +122,6 @@ export const Window: React.FC<WindowProps> = ({
           {/* Right Action / Window Status & Drag Grip Hint */}
           <div className="flex items-center space-x-2 text-[11px] text-[#586e75] font-mono pointer-events-none">
             <span className="w-2 h-2 rounded-full bg-[#859900]" />
-            <span className="hidden sm:inline text-[#859900]">Active</span>
             {!isMaximized && (
               <GripHorizontal className="w-4 h-4 text-[#586e75] ml-1 hidden sm:inline" />
             )}

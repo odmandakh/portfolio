@@ -53,25 +53,25 @@ export const githubData: GithubStats = {
   contributionCalendar: generateContributionCalendar(),
   featuredRepos: [
     {
-      name: 'aegis-event-engine',
-      description: 'Distributed event stream processing engine in Go & gRPC.',
-      stars: 840,
-      language: 'Go',
-      url: 'https://github.com/odmandakh/aegis-event-engine'
-    },
-    {
-      name: 'kubecanary-cli',
-      description: 'Lightweight Rust CLI for zero-downtime canary rollouts on K8s.',
-      stars: 620,
-      language: 'Rust',
-      url: 'https://github.com/odmandakh/kubecanary-cli'
-    },
-    {
       name: 'odmandakh-os',
       description: 'Personal portfolio presented as an elegant macOS-inspired desktop.',
       stars: 390,
       language: 'TypeScript',
       url: 'https://github.com/odmandakh/odmandakh-os'
+    },
+    {
+      name: 'buff_hunter',
+      description: 'Web scraper and bargain detector for buff.163.com and Lann market.',
+      stars: 210,
+      language: 'Python',
+      url: 'https://github.com/odmandakh/buff_hunter'
+    },
+    {
+      name: 'huzur-diy',
+      description: 'Online card games platform for playing among friends.',
+      stars: 180,
+      language: 'TypeScript',
+      url: 'https://github.com/odmandakh/huzur-diy'
     }
   ]
 };

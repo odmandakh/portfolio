@@ -94,25 +94,25 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#1e1e1e] text-zinc-100 font-sans overflow-hidden min-h-[520px]">
+    <div className="flex flex-col h-full bg-[#002b36] text-[#eee8d5] font-sans overflow-hidden min-h-[520px]">
       {/* macOS Preview Toolbar */}
-      <div className="bg-[#2a2a2a] border-b border-zinc-700/80 px-3 py-2 flex flex-wrap items-center justify-between gap-2 select-none text-xs text-zinc-300 shrink-0">
+      <div className="bg-[#073642] border-b border-[#2aa198]/30 px-3 py-2 flex flex-wrap items-center justify-between gap-2 select-none text-xs text-[#2aa198] shrink-0">
         {/* Left Toolbar Controls */}
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setShowThumbnails(!showThumbnails)}
             className={`p-1.5 rounded-md transition-colors cursor-pointer ${
-              showThumbnails ? 'bg-zinc-700 text-white' : 'hover:bg-zinc-700/60 text-zinc-400'
+              showThumbnails ? 'bg-[#002b36] text-[#2aa198] border border-[#2aa198]/30' : 'hover:bg-[#002b36]/60 text-[#839496]'
             }`}
             title="Toggle Sidebar Thumbnails"
           >
             <PanelLeft className="w-4 h-4" />
           </button>
 
-          <div className="h-4 w-px bg-zinc-700" />
+          <div className="h-4 w-px bg-[#2aa198]/30" />
 
           {/* Page Navigation */}
-          <div className="flex items-center space-x-1 bg-zinc-800/80 rounded-md px-2 py-1 border border-zinc-700">
+          <div className="flex items-center space-x-1 bg-[#002b36] rounded-md px-2 py-1 border border-[#2aa198]/30 text-[#eee8d5]">
             <button
               onClick={() => scrollToPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}

@@ -16,10 +16,10 @@ export const skillNodes: SkillNode[] = [
     category: 'Languages',
     level: 'Expert',
     years: '6 yrs',
-    description: 'Strict type safety, generic utility patterns, AST transformers, and full-stack enterprise development.',
+    description: 'Strict type safety, generic utility patterns, AST transformers, and full-stack web applications.',
     iconName: 'Code2',
     relatedSkillIds: ['react', 'nodejs', 'express', 'nextjs'],
-    projectIds: ['nexus-cloud-dashboard', 'odmandakh-os', 'aura-synth-ui']
+    projectIds: ['odmandakh-os', 'huzur-diy', 'blobfish', 'fhir-something']
   },
   {
     id: 'golang',
@@ -30,7 +30,7 @@ export const skillNodes: SkillNode[] = [
     description: 'High-concurrency microservices, gRPC streaming, channel concurrency, and low-latency network servers.',
     iconName: 'Terminal',
     relatedSkillIds: ['grpc', 'docker', 'redis', 'kubernetes'],
-    projectIds: ['aegis-engine']
+    projectIds: ['odmandakh-os', 'blobfish']
   },
   {
     id: 'python',
@@ -38,10 +38,10 @@ export const skillNodes: SkillNode[] = [
     category: 'Languages',
     level: 'Proficient',
     years: '4 yrs',
-    description: 'Async FastAPIs, data processing pipelines, AI/LLM SDK integrations, and machine learning scripts.',
+    description: 'Async FastAPIs, web scraping pipelines, image analysis scripts, and AI integrations.',
     iconName: 'FileCode',
     relatedSkillIds: ['fastapi', 'gemini-api', 'pytorch', 'postgresql'],
-    projectIds: ['lumina-vision-ai']
+    projectIds: ['buff_hunter', 'happy-pig', 'snooker-shot']
   },
   {
     id: 'rust',
@@ -49,10 +49,10 @@ export const skillNodes: SkillNode[] = [
     category: 'Languages',
     level: 'Proficient',
     years: '2 yrs',
-    description: 'Memory safety, Tokio async, Clap CLI interfaces, and systems utilities.',
+    description: 'Memory safety, Tokio async runtime, CLI interfaces, and high-performance utility tools.',
     iconName: 'Cpu',
     relatedSkillIds: ['kubernetes', 'docker'],
-    projectIds: ['kubeflow-canary-cli']
+    projectIds: ['odmandakh-os']
   },
 
   // Frontend
@@ -62,10 +62,10 @@ export const skillNodes: SkillNode[] = [
     category: 'Frontend',
     level: 'Expert',
     years: '6 yrs',
-    description: 'Component architecture, custom hooks, Server/Client components, dynamic state, and virtual rendering.',
+    description: 'Component architecture, custom hooks, dynamic client state, and responsive desktop window interfaces.',
     iconName: 'Atom',
     relatedSkillIds: ['typescript', 'tailwind', 'motion', 'nextjs'],
-    projectIds: ['nexus-cloud-dashboard', 'odmandakh-os', 'aura-synth-ui']
+    projectIds: ['odmandakh-os', 'blobfish', 'huzur-diy', 'todo-orientation']
   },
   {
     id: 'tailwind',
@@ -73,10 +73,10 @@ export const skillNodes: SkillNode[] = [
     category: 'Frontend',
     level: 'Expert',
     years: '5 yrs',
-    description: 'Utility-first design systems, modern CSS grid/flex layouts, dark mode optimization, and micro-interactions.',
+    description: 'Utility-first design systems, modern grid/flex layouts, Solarized color schemes, and responsive UI.',
     iconName: 'Palette',
     relatedSkillIds: ['react', 'motion'],
-    projectIds: ['nexus-cloud-dashboard', 'odmandakh-os', 'aura-synth-ui']
+    projectIds: ['odmandakh-os', 'blobfish', 'ecommerce-meat-store', 'happy-pig']
   },
   {
     id: 'motion',
@@ -84,10 +84,10 @@ export const skillNodes: SkillNode[] = [
     category: 'Frontend',
     level: 'Expert',
     years: '4 yrs',
-    description: 'Declarative layout transitions, gesture physics, spring physics, and desktop window animation dynamics.',
+    description: 'Declarative layout transitions, gesture physics, card animations, and interactive desktop windows.',
     iconName: 'Sparkles',
     relatedSkillIds: ['react', 'tailwind'],
-    projectIds: ['odmandakh-os']
+    projectIds: ['odmandakh-os', 'huzur-diy']
   },
 
   // Backend & Cloud
@@ -97,10 +97,10 @@ export const skillNodes: SkillNode[] = [
     category: 'Backend & Cloud',
     level: 'Expert',
     years: '6 yrs',
-    description: 'Event loop tuning, async I/O streams, Express middleware architecture, and REST/GraphQL APIs.',
+    description: 'Event loop tuning, async I/O streams, Express middleware architecture, and REST/WebSocket APIs.',
     iconName: 'Server',
     relatedSkillIds: ['typescript', 'express', 'postgresql', 'redis'],
-    projectIds: ['nexus-cloud-dashboard', 'odmandakh-os']
+    projectIds: ['odmandakh-os', 'huzur-diy', 'blobfish']
   },
   {
     id: 'express',
@@ -108,10 +108,10 @@ export const skillNodes: SkillNode[] = [
     category: 'Backend & Cloud',
     level: 'Expert',
     years: '6 yrs',
-    description: 'HTTP request routing, security headers, rate limiting, and full-stack Vite server integration.',
+    description: 'HTTP request routing, security middleware, rate limiting, and full-stack Vite server integration.',
     iconName: 'Layers',
     relatedSkillIds: ['nodejs', 'typescript'],
-    projectIds: ['nexus-cloud-dashboard', 'odmandakh-os']
+    projectIds: ['odmandakh-os', 'todo-orientation']
   },
   {
     id: 'postgresql',
@@ -122,7 +122,7 @@ export const skillNodes: SkillNode[] = [
     description: 'Relational schema design, index optimization, JSONB querying, transactions, and migration strategies.',
     iconName: 'Database',
     relatedSkillIds: ['nodejs', 'golang', 'python'],
-    projectIds: ['lumina-vision-ai']
+    projectIds: ['blobfish', 'ecommerce-meat-store']
   },
   {
     id: 'redis',
@@ -130,10 +130,10 @@ export const skillNodes: SkillNode[] = [
     category: 'Backend & Cloud',
     level: 'Expert',
     years: '5 yrs',
-    description: 'In-memory caching, Pub/Sub channels, distributed locking, and rate limiting counters.',
+    description: 'In-memory caching, Pub/Sub messaging channels, session storage, and rate limiting counters.',
     iconName: 'Zap',
     relatedSkillIds: ['golang', 'nodejs'],
-    projectIds: ['aegis-engine']
+    projectIds: ['huzur-diy', 'buff_hunter']
   },
 
   // DevOps & Infra
@@ -146,7 +146,7 @@ export const skillNodes: SkillNode[] = [
     description: 'Multi-stage container builds, image size optimization, layer caching, and Compose orchestration.',
     iconName: 'Box',
     relatedSkillIds: ['kubernetes', 'golang'],
-    projectIds: ['aegis-engine', 'lumina-vision-ai', 'kubeflow-canary-cli']
+    projectIds: ['odmandakh-os', 'buff_hunter']
   },
   {
     id: 'kubernetes',
@@ -154,10 +154,10 @@ export const skillNodes: SkillNode[] = [
     category: 'DevOps & Infra',
     level: 'Proficient',
     years: '4 yrs',
-    description: 'Container orchestration, deployment manifests, ingress controllers, canary traffic routing, and Helm.',
+    description: 'Container orchestration, deployment manifests, ingress controllers, and microservice management.',
     iconName: 'Network',
     relatedSkillIds: ['docker', 'rust', 'golang'],
-    projectIds: ['nexus-cloud-dashboard', 'kubeflow-canary-cli']
+    projectIds: ['odmandakh-os']
   },
 
   // AI & Systems
@@ -170,7 +170,7 @@ export const skillNodes: SkillNode[] = [
     description: 'Multimodal vision parsing, structured JSON schema generation, function calling, and streaming completions.',
     iconName: 'Bot',
     relatedSkillIds: ['python', 'typescript'],
-    projectIds: ['lumina-vision-ai']
+    projectIds: ['food-suggestion', 'snooker-shot']
   },
   {
     id: 'grpc',
@@ -181,6 +181,6 @@ export const skillNodes: SkillNode[] = [
     description: 'Binary protocol buffers, streaming RPCs, client generation, and inter-microservice communication.',
     iconName: 'Radio',
     relatedSkillIds: ['golang'],
-    projectIds: ['aegis-engine']
+    projectIds: ['fhir-something']
   }
 ];
