@@ -134,10 +134,11 @@ export const AboutView: React.FC = () => {
             <div className="max-w-2xl mx-auto space-y-6">
               {/* Section 1: Photo & Header */}
               <div className="flex flex-col items-center text-center space-y-3 py-2">
-                <div className="w-28 h-28 rounded-full overflow-hidden shrink-0 shadow-lg">
+                <div className="w-28 h-28 rounded-full overflow-hidden shrink-0 shadow-lg border-2 border-[#2aa198]/40 bg-[#073642]">
                   <img
                     src={profileData.avatarUrl}
                     alt="Odmandakh Battulga"
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover rounded-full"
                   />
                 </div>

@@ -34,7 +34,7 @@ export const resumeData: ResumeData = {
   location: 'Ulaanbaatar, Mongolia (Open to Remote)',
   website: 'https://odmandakh.dev',
   github: 'github.com/odmandakh',
-  linkedin: 'linkedin.com/in/odmandakh',
+  linkedin: 'linkedin.com/in/odmandakh-battulga',
   summary: 'Senior Software Engineer with 6+ years of expertise in high-concurrency event-driven systems, distributed web architectures, and cloud infrastructure. Track record of architecting sub-millisecond Go microservices, multi-region Kubernetes clusters, and responsive React web platforms.',
   experience: [
     {

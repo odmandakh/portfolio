@@ -350,43 +350,45 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
             </div>
           ) : (
             /* Finder Detailed List View */
-            <div className="bg-[#073642]/60 rounded-xl border border-[#2aa198]/30 overflow-hidden divide-y divide-[#2aa198]/20 text-xs">
-              <div className="grid grid-cols-12 px-4 py-2 bg-[#073642] text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono">
-                <span className="col-span-4">Name</span>
-                <span className="col-span-3">Category</span>
-                <span className="col-span-2">Tag</span>
-                <span className="col-span-1">Date</span>
-                <span className="col-span-2 text-right">Tech Stack</span>
-              </div>
-
-              {filteredProjects.map((project) => (
-                <div
-                  key={project.id}
-                  onClick={() => setSelectedProject(project)}
-                  className="grid grid-cols-12 px-4 py-3 items-center hover:bg-[#002b36]/60 transition-colors cursor-pointer text-[#eee8d5]"
-                >
-                  <div className="col-span-4 flex items-center space-x-2 font-semibold">
-                    <Folder className="w-4 h-4 text-[#268bd2] shrink-0 fill-[#268bd2]/20" />
-                    <span className="truncate">{project.title}</span>
-                  </div>
-                  <div className="col-span-3">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#002b36] border border-[#2aa198]/30 text-[#2aa198]">
-                      {project.category}
-                    </span>
-                  </div>
-                  <div className="col-span-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#002b36] border border-[#268bd2]/30 text-[#268bd2]">
-                      {project.tag}
-                    </span>
-                  </div>
-                  <div className="col-span-1 font-mono text-[11px] text-[#839496]">
-                    {project.date}
-                  </div>
-                  <div className="col-span-2 text-right font-mono text-[10px] text-[#839496] truncate">
-                    {project.technologies.slice(0, 2).join(', ')}
-                  </div>
+            <div className="bg-[#073642]/60 rounded-xl border border-[#2aa198]/30 overflow-x-auto custom-scrollbar text-xs">
+              <div className="min-w-[620px] divide-y divide-[#2aa198]/20">
+                <div className="grid grid-cols-12 px-4 py-2.5 bg-[#073642] text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono items-center">
+                  <span className="col-span-4">Name</span>
+                  <span className="col-span-3">Category</span>
+                  <span className="col-span-2">Tag</span>
+                  <span className="col-span-1">Date</span>
+                  <span className="col-span-2 text-right">Tech Stack</span>
                 </div>
-              ))}
+
+                {filteredProjects.map((project) => (
+                  <div
+                    key={project.id}
+                    onClick={() => setSelectedProject(project)}
+                    className="grid grid-cols-12 px-4 py-3 items-center hover:bg-[#002b36]/60 transition-colors cursor-pointer text-[#eee8d5]"
+                  >
+                    <div className="col-span-4 flex items-center space-x-2 font-semibold min-w-0 pr-2">
+                      <Folder className="w-4 h-4 text-[#268bd2] shrink-0 fill-[#268bd2]/20" />
+                      <span className="truncate">{project.title}</span>
+                    </div>
+                    <div className="col-span-3 pr-2">
+                      <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-[#002b36] border border-[#2aa198]/30 text-[#2aa198] whitespace-nowrap">
+                        {project.category}
+                      </span>
+                    </div>
+                    <div className="col-span-2 pr-2">
+                      <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-[#002b36] border border-[#268bd2]/30 text-[#268bd2] whitespace-nowrap">
+                        {project.tag}
+                      </span>
+                    </div>
+                    <div className="col-span-1 font-mono text-[11px] text-[#839496] whitespace-nowrap">
+                      {project.date}
+                    </div>
+                    <div className="col-span-2 text-right font-mono text-[10px] text-[#839496] truncate">
+                      {project.technologies.slice(0, 2).join(', ')}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

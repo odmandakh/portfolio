@@ -158,7 +158,7 @@ export const projectsData: Project[] = [
       'Solarized Dark theme implementation across window canvases.'
     ],
     demoUrl: 'https://odmandakh.dev',
-    githubUrl: 'https://github.com/odmandakh/odmandakh-os',
+    githubUrl: 'https://github.com/Odmandakh/portfolio',
     featured: true,
     date: '2026-08',
     metrics: 'Interactive Web OS Portfolio',
