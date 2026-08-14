@@ -1,17 +1,19 @@
 import React from 'react';
-import { 
-  Github, 
-  GitCommit, 
-  Star, 
-  GitFork, 
-  Flame, 
+import {
+  Github,
+  Star,
+  Flame,
   ExternalLink,
   Code2,
-  Calendar
+  Calendar,
+  Loader2
 } from 'lucide-react';
-import { githubData } from '../../data/github';
+import { profileData } from '../../data/profile';
+import { useGithubStats } from '../../hooks/useGithubStats';
 
 export const GithubView: React.FC = () => {
+  const { data: githubData, loading, error } = useGithubStats(profileData.githubUsername);
+
   const getLevelColor = (level: number) => {
     switch (level) {
       case 1: return 'bg-emerald-950/80 border border-emerald-800/40';
@@ -21,6 +23,23 @@ export const GithubView: React.FC = () => {
       default: return 'bg-zinc-800/60';
     }
   };
+
+  if (loading) {
+    return (
+      <div className="p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-zinc-400 gap-2 text-sm font-mono">
+        <Loader2 className="w-5 h-5 animate-spin" />
+        <span>Loading live GitHub data...</span>
+      </div>
+    );
+  }
+
+  if (error || !githubData) {
+    return (
+      <div className="p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-rose-400 text-sm font-mono text-center">
+        Unable to load live GitHub data right now. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto text-zinc-200">
@@ -80,7 +99,7 @@ export const GithubView: React.FC = () => {
             Total Stars Earned
           </span>
           <span className="text-2xl font-black text-emerald-400 tracking-tight">
-            {githubData.totalStars.toLocaleString()}+
+            {githubData.totalStars.toLocaleString()}
           </span>
         </div>
 
@@ -99,7 +118,7 @@ export const GithubView: React.FC = () => {
         <div className="flex items-center justify-between text-xs font-semibold text-zinc-300">
           <span className="flex items-center gap-1.5">
             <Calendar className="w-4 h-4 text-emerald-400" />
-            <span>2,482 contributions in the last year</span>
+            <span>{githubData.totalContributionsYear.toLocaleString()} contributions in the last year</span>
           </span>
           <div className="flex items-center space-x-1 text-[10px] text-zinc-500">
             <span>Less</span>
@@ -125,44 +144,46 @@ export const GithubView: React.FC = () => {
       </div>
 
       {/* Featured Repositories Grid */}
-      <div className="space-y-3">
-        <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center space-x-1.5">
-          <Code2 className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Featured Repositories</span>
-        </h3>
+      {githubData.featuredRepos.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center space-x-1.5">
+            <Code2 className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Featured Repositories</span>
+          </h3>
 
-        <div className="grid sm:grid-cols-3 gap-3">
-          {githubData.featuredRepos.map((repo, idx) => (
-            <a
-              key={idx}
-              href={repo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 rounded-2xl bg-zinc-950/50 hover:bg-zinc-900/80 border border-zinc-800 hover:border-emerald-500/40 transition-all duration-200 space-y-2 flex flex-col justify-between group"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-sm text-white group-hover:text-emerald-300 transition-colors truncate">
-                    {repo.name}
-                  </span>
-                  <ExternalLink className="w-3.5 h-3.5 text-zinc-500 group-hover:text-emerald-400 shrink-0" />
+          <div className="grid sm:grid-cols-3 gap-3">
+            {githubData.featuredRepos.map((repo, idx) => (
+              <a
+                key={idx}
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-4 rounded-2xl bg-zinc-950/50 hover:bg-zinc-900/80 border border-zinc-800 hover:border-emerald-500/40 transition-all duration-200 space-y-2 flex flex-col justify-between group"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-bold text-sm text-white group-hover:text-emerald-300 transition-colors truncate">
+                      {repo.name}
+                    </span>
+                    <ExternalLink className="w-3.5 h-3.5 text-zinc-500 group-hover:text-emerald-400 shrink-0" />
+                  </div>
+                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                    {repo.description}
+                  </p>
                 </div>
-                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                  {repo.description}
-                </p>
-              </div>
 
-              <div className="flex items-center justify-between text-xs text-zinc-400 pt-2 border-t border-zinc-800/80 font-mono">
-                <span className="text-emerald-400 font-semibold">{repo.language}</span>
-                <span className="flex items-center text-amber-400">
-                  <Star className="w-3.5 h-3.5 mr-1 fill-amber-400" />
-                  {repo.stars}
-                </span>
-              </div>
-            </a>
-          ))}
+                <div className="flex items-center justify-between text-xs text-zinc-400 pt-2 border-t border-zinc-800/80 font-mono">
+                  <span className="text-emerald-400 font-semibold">{repo.language}</span>
+                  <span className="flex items-center text-amber-400">
+                    <Star className="w-3.5 h-3.5 mr-1 fill-amber-400" />
+                    {repo.stars}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

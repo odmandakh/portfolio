@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
-import { 
-  User, 
-  Laptop, 
-  HardDrive, 
-  Info, 
-  Github, 
-  Linkedin, 
-  Mail, 
-  MapPin, 
-  GraduationCap, 
-  Briefcase, 
+import {
+  User,
+  Laptop,
+  HardDrive,
+  Info,
+  Github,
+  Linkedin,
+  Mail,
+  MapPin,
+  GraduationCap,
+  Briefcase,
   Heart
 } from 'lucide-react';
 import { profileData } from '../../data/profile';
+import { projectsData } from '../../data/projects';
+import { certificatesData } from '../../data/certificates';
+import { getYearsOfExperience } from '../../utils/date';
+import { useGithubStats } from '../../hooks/useGithubStats';
 
 interface SkillItem {
   name: string;
@@ -32,6 +36,15 @@ interface SkillGroup {
 export const AboutView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'report' | 'skills'>('overview');
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+
+  const { data: githubStats } = useGithubStats(profileData.githubUsername);
+
+  const techStats = [
+    { label: 'Years Experience', value: `${getYearsOfExperience(profileData.careerStartDate)}+` },
+    { label: 'Shipped Projects', value: `${projectsData.length}` },
+    { label: 'Certifications', value: `${certificatesData.length}` },
+    { label: 'Code Contributions', value: githubStats ? githubStats.totalContributionsYear.toLocaleString() : '—' }
+  ];
 
   const skillGroups: SkillGroup[] = [
     {
@@ -134,12 +147,12 @@ export const AboutView: React.FC = () => {
             <div className="max-w-2xl mx-auto space-y-6">
               {/* Section 1: Photo & Header */}
               <div className="flex flex-col items-center text-center space-y-3 py-2">
-                <div className="w-28 h-28 rounded-full overflow-hidden shrink-0 shadow-lg border-2 border-[#2aa198]/40 bg-[#073642]">
+                <div className="w-40 h-40 rounded-2xl overflow-hidden shrink-0 shadow-lg border-2 border-[#2aa198]/40 bg-[#073642]">
                   <img
                     src={profileData.avatarUrl}
                     alt="Odmandakh Battulga"
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover rounded-full"
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
                 <div className="space-y-1">
@@ -178,7 +191,14 @@ export const AboutView: React.FC = () => {
                     <Briefcase className="w-4 h-4 text-[#859900] shrink-0" />
                     <div>
                       <span className="text-[10px] text-[#586e75] font-mono block">Work</span>
-                      <span className="font-bold text-[#eee8d5]">ex AND</span>
+                      <a
+                        href="https://www.mezorn.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-bold text-[#eee8d5] hover:text-[#2aa198] hover:underline transition-colors cursor-pointer"
+                      >
+                        Mezorn LLC
+                      </a>
                     </div>
                   </div>
 
@@ -245,7 +265,7 @@ export const AboutView: React.FC = () => {
                   Engineering Highlights
                 </span>
                 <div className="grid sm:grid-cols-2 gap-3 text-xs">
-                  {profileData.stats.map((stat, idx) => (
+                  {techStats.map((stat, idx) => (
                     <div key={idx} className="p-4 rounded-2xl bg-[#073642]/80 border border-[#2aa198]/30 space-y-1 shadow-md">
                       <span className="text-[10px] text-[#586e75] uppercase font-mono block">{stat.label}</span>
                       <span className="text-xl font-bold text-[#b58900] font-mono">{stat.value}</span>
@@ -283,19 +303,16 @@ export const AboutView: React.FC = () => {
 
           {activeTab === 'skills' && (
             <div className="max-w-2xl mx-auto space-y-6">
-              <div className="flex items-center justify-between border-b border-[#2aa198]/20 pb-3">
-                <div className="flex items-center space-x-2">
-                  <HardDrive className="w-5 h-5 text-[#b58900]" />
-                  <h2 className="text-lg font-bold text-[#eee8d5]">Skills storage</h2>
-                </div>
-                <span className="text-xs font-mono text-[#586e75]">System Memory Allocation</span>
+              <div className="flex items-center space-x-2 border-b border-[#2aa198]/20 pb-3">
+                <HardDrive className="w-5 h-5 text-[#b58900]" />
+                <h2 className="text-lg font-bold text-[#eee8d5]">Skills storage</h2>
               </div>
 
               {/* macOS System Settings Storage Bars */}
               <div className="space-y-6">
                 {skillGroups.map((group) => (
-                  <div 
-                    key={group.id} 
+                  <div
+                    key={group.id}
                     className="p-5 rounded-2xl bg-[#073642]/90 border border-[#2aa198]/30 shadow-lg space-y-4 font-sans"
                   >
                     {/* macOS Storage Bar Header */}
@@ -316,7 +333,7 @@ export const AboutView: React.FC = () => {
                               key={sIdx}
                               onMouseEnter={() => setHoveredSkill(`${group.id}-${skill.name}`)}
                               onMouseLeave={() => setHoveredSkill(null)}
-                              style={{ 
+                              style={{
                                 width: `${skill.percentage}%`,
                                 backgroundColor: skill.color
                               }}
@@ -339,21 +356,21 @@ export const AboutView: React.FC = () => {
                             onMouseEnter={() => setHoveredSkill(`${group.id}-${skill.name}`)}
                             onMouseLeave={() => setHoveredSkill(null)}
                             className={`flex items-center space-x-1.5 px-2 py-1 rounded-md transition-all cursor-pointer ${
-                              isHovered 
-                                ? 'bg-[#002b36] text-[#eee8d5] border border-[#2aa198]/40 shadow-sm' 
+                              isHovered
+                                ? 'bg-[#002b36] text-[#eee8d5] border border-[#2aa198]/40 shadow-sm'
                                 : 'text-[#839496] hover:text-[#eee8d5]'
                             }`}
                           >
-                            <span 
-                              className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" 
+                            <span
+                              className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm"
                               style={{ backgroundColor: skill.color }}
                             />
                             <span className="font-semibold text-[11px]">{skill.name}</span>
-                            
+
                             {/* Hover Badge showing Proficiency Level */}
                             <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-bold transition-opacity ${
-                              isHovered 
-                                ? 'bg-[#2aa198]/20 text-[#2aa198] border border-[#2aa198]/30 opacity-100' 
+                              isHovered
+                                ? 'bg-[#2aa198]/20 text-[#2aa198] border border-[#2aa198]/30 opacity-100'
                                 : 'text-[#586e75] opacity-70'
                             }`}>
                               {skill.level}

@@ -1,4 +1,5 @@
 import { DesktopItem } from '../types/portfolio';
+import { getYearsOfExperience } from '../utils/date';
 
 export const desktopItems: DesktopItem[] = [
   {
@@ -14,7 +15,7 @@ export const desktopItems: DesktopItem[] = [
     title: 'Certificates',
     type: 'folder',
     icon: 'FolderAward',
-    badge: '6',
+    badge: '4',
     description: 'Certificates'
   },
   {
@@ -44,7 +45,7 @@ export const desktopItems: DesktopItem[] = [
     title: 'Experience',
     type: 'widget',
     icon: 'Briefcase',
-    badge: '6+ YOE',
+    badge: `${getYearsOfExperience()}+ YOE`,
     description: 'Experience'
   },
   {

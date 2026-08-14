@@ -2,20 +2,18 @@ export interface ProfileData {
   name: string;
   title: string;
   role: string;
-  yearsExperience: number;
+  careerStartDate: string;
   location: string;
   avatarUrl: string;
   bio: string;
   shortBio: string;
   status: string;
   githubUrl: string;
+  githubUsername: string;
+  leetcodeUsername: string;
   linkedinUrl: string;
   email: string;
   xUrl?: string;
-  stats: {
-    label: string;
-    value: string;
-  }[];
 }
 
 export interface Project {
@@ -75,6 +73,7 @@ export interface Certificate {
   title: string;
   issuer: string;
   issueDate: string;
+  expirationDate?: string;
   credentialId: string;
   verifyUrl: string;
   description: string;
@@ -92,7 +91,7 @@ export interface ExperienceEntry {
   current: boolean;
   highlights: string[];
   technologies: string[];
-  impactMetric: string;
+  impactMetric?: string;
 }
 
 export interface GithubDay {
@@ -131,10 +130,8 @@ export interface LeetcodeStats {
   acceptanceRate: string;
   ranking: string;
   streakDays: number;
-  badgesCount: number;
   recentSubmissions: {
     title: string;
-    difficulty: 'Easy' | 'Medium' | 'Hard';
     timeAgo: string;
     lang: string;
   }[];

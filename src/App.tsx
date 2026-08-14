@@ -37,7 +37,7 @@ export default function App() {
     if (!activeWindow) return { title: 'Desktop', icon: null };
     if (activeWindow === 'cv') {
       return {
-        title: '',
+        title: 'Curriculum Vitae / Resume',
         subtitle: undefined
       };
     }

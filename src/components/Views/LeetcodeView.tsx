@@ -1,17 +1,34 @@
 import React from 'react';
-import { 
-  Code, 
-  Trophy, 
-  Flame, 
-  Award, 
-  CheckCircle2, 
-  Clock, 
-  Zap,
-  Target
+import {
+  Code,
+  Flame,
+  CheckCircle2,
+  Clock,
+  Loader2
 } from 'lucide-react';
-import { leetcodeData } from '../../data/leetcode';
+import { profileData } from '../../data/profile';
+import { useLeetcodeStats } from '../../hooks/useLeetcodeStats';
 
 export const LeetcodeView: React.FC = () => {
+  const { data: leetcodeData, loading, error } = useLeetcodeStats(profileData.leetcodeUsername);
+
+  if (loading) {
+    return (
+      <div className="p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-zinc-400 gap-2 text-sm font-mono">
+        <Loader2 className="w-5 h-5 animate-spin" />
+        <span>Loading live LeetCode data...</span>
+      </div>
+    );
+  }
+
+  if (error || !leetcodeData) {
+    return (
+      <div className="p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-rose-400 text-sm font-mono text-center">
+        Unable to load live LeetCode data right now. Please try again later.
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-3xl mx-auto text-zinc-200">
       {/* Top Header Card */}
@@ -48,9 +65,9 @@ export const LeetcodeView: React.FC = () => {
             <span>{leetcodeData.easySolved} / {leetcodeData.easyTotal}</span>
           </div>
           <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-            <div 
-              style={{ width: `${(leetcodeData.easySolved / leetcodeData.easyTotal) * 100}%` }} 
-              className="h-full bg-emerald-500 rounded-full" 
+            <div
+              style={{ width: `${(leetcodeData.easySolved / leetcodeData.easyTotal) * 100}%` }}
+              className="h-full bg-emerald-500 rounded-full"
             />
           </div>
           <p className="text-[11px] text-zinc-500 font-mono text-right">
@@ -65,9 +82,9 @@ export const LeetcodeView: React.FC = () => {
             <span>{leetcodeData.mediumSolved} / {leetcodeData.mediumTotal}</span>
           </div>
           <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-            <div 
-              style={{ width: `${(leetcodeData.mediumSolved / leetcodeData.mediumTotal) * 100}%` }} 
-              className="h-full bg-amber-500 rounded-full" 
+            <div
+              style={{ width: `${(leetcodeData.mediumSolved / leetcodeData.mediumTotal) * 100}%` }}
+              className="h-full bg-amber-500 rounded-full"
             />
           </div>
           <p className="text-[11px] text-zinc-500 font-mono text-right">
@@ -82,9 +99,9 @@ export const LeetcodeView: React.FC = () => {
             <span>{leetcodeData.hardSolved} / {leetcodeData.hardTotal}</span>
           </div>
           <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-            <div 
-              style={{ width: `${(leetcodeData.hardSolved / leetcodeData.hardTotal) * 100}%` }} 
-              className="h-full bg-rose-500 rounded-full" 
+            <div
+              style={{ width: `${(leetcodeData.hardSolved / leetcodeData.hardTotal) * 100}%` }}
+              className="h-full bg-rose-500 rounded-full"
             />
           </div>
           <p className="text-[11px] text-zinc-500 font-mono text-right">
@@ -94,39 +111,31 @@ export const LeetcodeView: React.FC = () => {
       </div>
 
       {/* Recent Submissions Feed */}
-      <div className="p-5 rounded-2xl bg-zinc-950/60 border border-zinc-800 space-y-3">
-        <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center space-x-1.5">
-          <Clock className="w-3.5 h-3.5 text-amber-400" />
-          <span>Recent Problem Submissions</span>
-        </h3>
+      {leetcodeData.recentSubmissions.length > 0 && (
+        <div className="p-5 rounded-2xl bg-zinc-950/60 border border-zinc-800 space-y-3">
+          <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center space-x-1.5">
+            <Clock className="w-3.5 h-3.5 text-amber-400" />
+            <span>Recent Problem Submissions</span>
+          </h3>
 
-        <div className="space-y-2">
-          {leetcodeData.recentSubmissions.map((sub, idx) => (
-            <div
-              key={idx}
-              className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between text-xs"
-            >
-              <div className="flex items-center space-x-3">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <div>
-                  <span className="font-bold text-white block">{sub.title}</span>
-                  <span className="text-[10px] text-zinc-500 font-mono">{sub.timeAgo} • Language: {sub.lang}</span>
+          <div className="space-y-2">
+            {leetcodeData.recentSubmissions.map((sub, idx) => (
+              <div
+                key={idx}
+                className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between text-xs"
+              >
+                <div className="flex items-center space-x-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div>
+                    <span className="font-bold text-white block">{sub.title}</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">{sub.timeAgo} • Language: {sub.lang}</span>
+                  </div>
                 </div>
               </div>
-
-              <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                sub.difficulty === 'Easy' 
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                  : sub.difficulty === 'Medium'
-                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                  : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-              }`}>
-                {sub.difficulty}
-              </span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

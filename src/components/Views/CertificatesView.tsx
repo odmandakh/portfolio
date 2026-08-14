@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
-import { 
-  Folder, 
-  Award, 
-  Search, 
-  ExternalLink, 
-  ShieldCheck, 
-  Calendar, 
-  ArrowLeft, 
-  ArrowRight, 
-  Grid, 
-  List as ListIcon, 
-  ChevronRight, 
-  HardDrive, 
-  Tag, 
-  FileText, 
+import React, { useState, useEffect } from 'react';
+import {
+  Folder,
+  Award,
+  Search,
+  ExternalLink,
+  ShieldCheck,
+  Calendar,
+  ArrowLeft,
+  ArrowRight,
+  Grid,
+  List as ListIcon,
+  ChevronRight,
+  HardDrive,
+  Tag,
+  FileText,
   X,
-  Layers
+  Layers,
+  Copy,
+  Check
 } from 'lucide-react';
 import { certificatesData, certificateCategories } from '../../data/certificates';
 import { Certificate, DesktopWindowId } from '../../types/portfolio';
@@ -34,8 +36,20 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
     width: null,
     height: null
   });
+  const [copiedCredentialId, setCopiedCredentialId] = useState(false);
 
   const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCopiedCredentialId(false);
+  }, [selectedCert?.id]);
+
+  const handleCopyCredentialId = () => {
+    if (!selectedCert) return;
+    navigator.clipboard.writeText(selectedCert.credentialId);
+    setCopiedCredentialId(true);
+    setTimeout(() => setCopiedCredentialId(false), 1500);
+  };
 
   const handleModalResizeStart = (e: React.PointerEvent, handle: 'e' | 's' | 'se' | 'sw' | 'w') => {
     e.stopPropagation();
@@ -80,7 +94,7 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
     window.addEventListener('pointerup', onPointerUp);
   };
 
-  const tags = ['All', 'AWS', 'CKA', 'Meta', 'GCP'];
+  const tags = ['All', 'AWS', 'CKA', 'SymfonyCasts'];
 
   const filteredCerts = certificatesData.filter((cert) => {
     const matchesCategory = activeCategory === 'all' || cert.categoryId === activeCategory;
@@ -403,9 +417,20 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
                 <span className="text-[#586e75]">Issue Date:</span>
                 <span className="text-[#eee8d5]">{selectedCert.issueDate}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span className="text-[#586e75]">Credential ID:</span>
-                <span className="text-[#2aa198] font-bold">{selectedCert.credentialId}</span>
+                <button
+                  onClick={handleCopyCredentialId}
+                  className="text-[#2aa198] font-bold flex items-center gap-1.5 hover:text-[#eee8d5] transition-colors cursor-pointer"
+                  title="Copy credential ID"
+                >
+                  <span>{selectedCert.credentialId}</span>
+                  {copiedCredentialId ? (
+                    <Check className="w-3 h-3 text-[#859900]" />
+                  ) : (
+                    <Copy className="w-3 h-3" />
+                  )}
+                </button>
               </div>
             </div>
 

@@ -1,16 +1,18 @@
 import React from 'react';
-import { Trophy, ChevronRight, Flame } from 'lucide-react';
-import { leetcodeData } from '../../data/leetcode';
+import { Trophy, ChevronRight, Flame, Loader2 } from 'lucide-react';
+import { profileData } from '../../data/profile';
+import { useLeetcodeStats } from '../../hooks/useLeetcodeStats';
 
 interface LeetcodeWidgetProps {
   onClick: () => void;
 }
 
 export const LeetcodeWidget: React.FC<LeetcodeWidgetProps> = ({ onClick }) => {
-  // Calculate ratios for SVG donut progress segments
-  const easyRatio = leetcodeData.easySolved / leetcodeData.totalSolved;
-  const mediumRatio = leetcodeData.mediumSolved / leetcodeData.totalSolved;
-  const hardRatio = leetcodeData.hardSolved / leetcodeData.totalSolved;
+  const { data: leetcodeData, loading, error } = useLeetcodeStats(profileData.leetcodeUsername);
+
+  const easyRatio = leetcodeData && leetcodeData.totalSolved > 0 ? leetcodeData.easySolved / leetcodeData.totalSolved : 0;
+  const mediumRatio = leetcodeData && leetcodeData.totalSolved > 0 ? leetcodeData.mediumSolved / leetcodeData.totalSolved : 0;
+  const hardRatio = leetcodeData && leetcodeData.totalSolved > 0 ? leetcodeData.hardSolved / leetcodeData.totalSolved : 0;
 
   const strokeDasharray = 150.8; // 2 * PI * 24
   const easyDash = strokeDasharray * easyRatio;
@@ -34,126 +36,129 @@ export const LeetcodeWidget: React.FC<LeetcodeWidgetProps> = ({ onClick }) => {
           <div>
             <div className="flex items-center space-x-1.5">
               <span className="text-xs font-bold text-[#eff1f6] group-hover:text-[#ffa116] transition-colors font-sans">
-                @{leetcodeData.username}
+                @{profileData.leetcodeUsername}
               </span>
             </div>
             <span className="text-[10px] text-[#8a8a8a] font-mono block -mt-0.5">LeetCode Profile</span>
           </div>
         </div>
 
-        <div className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#ffa116]/10 border border-[#ffa116]/30 text-[#ffa116] text-[11px] font-mono font-bold">
-          <Trophy className="w-3 h-3 text-[#ffa116]" />
-          <span>{leetcodeData.ranking}</span>
-        </div>
+        {leetcodeData && (
+          <div className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#ffa116]/10 border border-[#ffa116]/30 text-[#ffa116] text-[11px] font-mono font-bold">
+            <Trophy className="w-3 h-3 text-[#ffa116]" />
+            <span>{leetcodeData.ranking}</span>
+          </div>
+        )}
       </div>
 
-      {/* Center Donut Gauge + Difficulty Breakdown */}
-      <div className="my-2 z-10 flex items-center justify-between gap-3">
-        {/* Official Donut Progress Ring */}
-        <div className="relative w-20 h-20 shrink-0 flex items-center justify-center">
-          <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 60 60">
-            {/* Track Circle */}
-            <circle
-              cx="30"
-              cy="30"
-              r="24"
-              className="stroke-[#2a2a2a]"
-              strokeWidth="5"
-              fill="transparent"
-            />
-            {/* Easy Arc */}
-            <circle
-              cx="30"
-              cy="30"
-              r="24"
-              className="stroke-[#00b8a3] transition-all duration-500"
-              strokeWidth="5"
-              fill="transparent"
-              strokeDasharray={`${easyDash} ${strokeDasharray - easyDash}`}
-              strokeDashoffset="0"
-              strokeLinecap="round"
-            />
-            {/* Medium Arc */}
-            <circle
-              cx="30"
-              cy="30"
-              r="24"
-              className="stroke-[#ffb800] transition-all duration-500"
-              strokeWidth="5"
-              fill="transparent"
-              strokeDasharray={`${mediumDash} ${strokeDasharray - mediumDash}`}
-              strokeDashoffset={`-${easyDash}`}
-              strokeLinecap="round"
-            />
-            {/* Hard Arc */}
-            <circle
-              cx="30"
-              cy="30"
-              r="24"
-              className="stroke-[#ff2d55] transition-all duration-500"
-              strokeWidth="5"
-              fill="transparent"
-              strokeDasharray={`${hardDash} ${strokeDasharray - hardDash}`}
-              strokeDashoffset={`-${easyDash + mediumDash}`}
-              strokeLinecap="round"
-            />
-          </svg>
+      {loading && (
+        <div className="flex-1 flex items-center justify-center py-6 text-[#8a8a8a] gap-2 text-xs font-mono">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Loading live LeetCode data...</span>
+        </div>
+      )}
 
-          {/* Center Solved Count */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-base font-black text-[#eff1f6] group-hover:text-[#ffa116] transition-colors leading-none font-mono">
-              {leetcodeData.totalSolved}
+      {!loading && error && (
+        <div className="flex-1 flex items-center justify-center py-6 text-[#ff2d55] text-xs font-mono text-center px-2">
+          Unable to load live LeetCode data
+        </div>
+      )}
+
+      {!loading && leetcodeData && (
+        <>
+          {/* Center Donut Gauge + Difficulty Breakdown */}
+          <div className="my-2 z-10 flex items-center justify-between gap-3">
+            {/* Official Donut Progress Ring */}
+            <div className="relative w-20 h-20 shrink-0 flex items-center justify-center">
+              <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 60 60">
+                {/* Track Circle */}
+                <circle cx="30" cy="30" r="24" className="stroke-[#2a2a2a]" strokeWidth="5" fill="transparent" />
+                {/* Easy Arc */}
+                <circle
+                  cx="30" cy="30" r="24"
+                  className="stroke-[#00b8a3] transition-all duration-500"
+                  strokeWidth="5" fill="transparent"
+                  strokeDasharray={`${easyDash} ${strokeDasharray - easyDash}`}
+                  strokeDashoffset="0"
+                  strokeLinecap="round"
+                />
+                {/* Medium Arc */}
+                <circle
+                  cx="30" cy="30" r="24"
+                  className="stroke-[#ffb800] transition-all duration-500"
+                  strokeWidth="5" fill="transparent"
+                  strokeDasharray={`${mediumDash} ${strokeDasharray - mediumDash}`}
+                  strokeDashoffset={`-${easyDash}`}
+                  strokeLinecap="round"
+                />
+                {/* Hard Arc */}
+                <circle
+                  cx="30" cy="30" r="24"
+                  className="stroke-[#ff2d55] transition-all duration-500"
+                  strokeWidth="5" fill="transparent"
+                  strokeDasharray={`${hardDash} ${strokeDasharray - hardDash}`}
+                  strokeDashoffset={`-${easyDash + mediumDash}`}
+                  strokeLinecap="round"
+                />
+              </svg>
+
+              {/* Center Solved Count */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-base font-black text-[#eff1f6] group-hover:text-[#ffa116] transition-colors leading-none font-mono">
+                  {leetcodeData.totalSolved}
+                </span>
+                <span className="text-[9px] text-[#8a8a8a] font-medium leading-tight">Solved</span>
+              </div>
+            </div>
+
+            {/* Right Difficulty Breakdown Stack */}
+            <div className="flex-1 space-y-1.5 font-mono text-[11px]">
+              {/* Easy */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#00b8a3]" />
+                  <span className="text-[#00b8a3] font-bold">Easy</span>
+                </div>
+                <span className="text-[#eff1f6] font-bold">{leetcodeData.easySolved}<span className="text-[#666] font-normal text-[10px]">/{leetcodeData.easyTotal}</span></span>
+              </div>
+
+              {/* Medium */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#ffb800]" />
+                  <span className="text-[#ffb800] font-bold">Medium</span>
+                </div>
+                <span className="text-[#eff1f6] font-bold">{leetcodeData.mediumSolved}<span className="text-[#666] font-normal text-[10px]">/{leetcodeData.mediumTotal}</span></span>
+              </div>
+
+              {/* Hard */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#ff2d55]" />
+                  <span className="text-[#ff2d55] font-bold">Hard</span>
+                </div>
+                <span className="text-[#eff1f6] font-bold">{leetcodeData.hardSolved}<span className="text-[#666] font-normal text-[10px]">/{leetcodeData.hardTotal}</span></span>
+              </div>
+            </div>
+          </div>
+
+          {/* Official Footer */}
+          <div className="z-10 pt-2 border-t border-[#3e3e3e] w-full flex items-center justify-between text-[10px] text-[#8a8a8a] font-mono">
+            <div className="flex items-center space-x-2">
+              <span className="flex items-center text-[#ffb800] font-bold">
+                <Flame className="w-3 h-3 mr-0.5 fill-[#ffb800]" />
+                {leetcodeData.streakDays}d
+              </span>
+              <span className="text-[#3e3e3e]">•</span>
+              <span className="text-[#00b8a3] font-bold">{leetcodeData.acceptanceRate} pass</span>
+            </div>
+
+            <span className="text-[#ffa116] font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
+              View Profile <ChevronRight className="w-3 h-3 ml-0.5" />
             </span>
-            <span className="text-[9px] text-[#8a8a8a] font-medium leading-tight">Solved</span>
           </div>
-        </div>
-
-        {/* Right Difficulty Breakdown Stack */}
-        <div className="flex-1 space-y-1.5 font-mono text-[11px]">
-          {/* Easy */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#00b8a3]" />
-              <span className="text-[#00b8a3] font-bold">Easy</span>
-            </div>
-            <span className="text-[#eff1f6] font-bold">{leetcodeData.easySolved}<span className="text-[#666] font-normal text-[10px]">/{leetcodeData.easyTotal}</span></span>
-          </div>
-
-          {/* Medium */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#ffb800]" />
-              <span className="text-[#ffb800] font-bold">Medium</span>
-            </div>
-            <span className="text-[#eff1f6] font-bold">{leetcodeData.mediumSolved}<span className="text-[#666] font-normal text-[10px]">/{leetcodeData.mediumTotal}</span></span>
-          </div>
-
-          {/* Hard */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#ff2d55]" />
-              <span className="text-[#ff2d55] font-bold">Hard</span>
-            </div>
-            <span className="text-[#eff1f6] font-bold">{leetcodeData.hardSolved}<span className="text-[#666] font-normal text-[10px]">/{leetcodeData.hardTotal}</span></span>
-          </div>
-        </div>
-      </div>
-
-      {/* Official Footer */}
-      <div className="z-10 pt-2 border-t border-[#3e3e3e] w-full flex items-center justify-between text-[10px] text-[#8a8a8a] font-mono">
-        <div className="flex items-center space-x-2">
-          <span className="flex items-center text-[#ffb800] font-bold">
-            <Flame className="w-3 h-3 mr-0.5 fill-[#ffb800]" />
-            {leetcodeData.streakDays}d
-          </span>
-          <span className="text-[#3e3e3e]">•</span>
-          <span className="text-[#00b8a3] font-bold">{leetcodeData.acceptanceRate} pass</span>
-        </div>
-
-        <span className="text-[#ffa116] font-bold flex items-center group-hover:translate-x-0.5 transition-transform">
-          View Profile <ChevronRight className="w-3 h-3 ml-0.5" />
-        </span>
-      </div>
+        </>
+      )}
     </button>
   );
 };

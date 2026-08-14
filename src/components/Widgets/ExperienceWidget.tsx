@@ -1,5 +1,5 @@
 import React from 'react';
-import { Briefcase, TrendingUp, ChevronRight, Award } from 'lucide-react';
+import { Briefcase, ChevronRight, Award } from 'lucide-react';
 import { experienceWidgetSummary, experienceData } from '../../data/experience';
 
 interface ExperienceWidgetProps {
@@ -42,7 +42,6 @@ export const ExperienceWidget: React.FC<ExperienceWidgetProps> = ({ onClick }) =
       <div className="z-10 pt-2 border-t border-[#2aa198]/20 w-full">
         <div className="flex items-center justify-between text-[11px] text-[#93a1a1] mb-1.5 font-mono">
           <span className="flex items-center text-[#859900] font-medium">
-            <TrendingUp className="w-3 h-3 mr-1 text-[#859900]" />
             {currentRole.impactMetric}
           </span>
           <span className="text-[#586e75]">{currentRole.period}</span>
