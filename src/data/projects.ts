@@ -76,6 +76,7 @@ export const projectsData: Project[] = [
       'Synchronizing multi-player game state with minimal latency.',
       'Handling smooth card deal and flip animations using Motion.'
     ],
+    githubUrl: 'https://github.com/odmandakh/huzur-diy',
     featured: true,
     date: 'Planned',
     metrics: 'Planned Multiplayer Game Room',
@@ -198,6 +199,7 @@ export const projectsData: Project[] = [
       'Handling rate limits and anti-scraping measures on foreign marketplaces.',
       'Real-time price arbitrage algorithms and alert triggers.'
     ],
+    githubUrl: 'https://github.com/odmandakh/buff_hunter',
     featured: false,
     date: 'Planned',
     metrics: 'Planned Scraping & Arbitrage Bot',

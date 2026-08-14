@@ -35,6 +35,18 @@ export default function App() {
 
   const getActiveWindowMeta = () => {
     if (!activeWindow) return { title: 'Desktop', icon: null };
+    if (activeWindow === 'cv') {
+      return {
+        title: '',
+        subtitle: undefined
+      };
+    }
+    if (activeWindow === 'contact') {
+      return {
+        title: 'Message',
+        subtitle: undefined
+      };
+    }
     const item = desktopItems.find(i => i.id === activeWindow);
     return {
       title: item ? item.title : 'Desktop',
@@ -47,11 +59,11 @@ export default function App() {
       case 'about':
         return <AboutView />;
       case 'projects':
-        return <ProjectsView />;
+        return <ProjectsView onNavigate={(id) => handleOpenWindow(id)} />;
       case 'skills':
         return <SkillsView />;
       case 'certificates':
-        return <CertificatesView />;
+        return <CertificatesView onNavigate={(id) => handleOpenWindow(id)} />;
       case 'cv':
         return <CVView />;
       case 'experience':

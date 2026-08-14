@@ -1,301 +1,371 @@
 import React, { useState } from 'react';
 import { 
+  User, 
   Laptop, 
-  Cpu, 
   HardDrive, 
-  ShieldCheck, 
-  Sparkles, 
   Info, 
-  ExternalLink, 
   Github, 
   Linkedin, 
   Mail, 
   MapPin, 
-  Check, 
-  RefreshCw, 
-  Terminal,
-  Activity,
-  Layers,
-  Award
+  GraduationCap, 
+  Briefcase, 
+  Heart
 } from 'lucide-react';
 import { profileData } from '../../data/profile';
 
-export const AboutView: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'report' | 'storage' | 'updates'>('overview');
-  const [checkingUpdates, setCheckingUpdates] = useState(false);
-  const [updateStatus, setUpdateStatus] = useState<string | null>(null);
+interface SkillItem {
+  name: string;
+  level: 'Expert' | 'Experienced' | 'Skillful';
+  color: string;
+  percentage: number;
+}
 
-  const handleCheckUpdates = () => {
-    setCheckingUpdates(true);
-    setUpdateStatus(null);
-    setTimeout(() => {
-      setCheckingUpdates(false);
-      setUpdateStatus('Odmandakh OS 15.4 is up to date (Latest Build 2026.08)');
-    }, 1200);
-  };
+interface SkillGroup {
+  id: string;
+  title: string;
+  driveName: string;
+  totalCapacity: string;
+  skills: SkillItem[];
+}
+
+export const AboutView: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'report' | 'skills'>('overview');
+  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+
+  const skillGroups: SkillGroup[] = [
+    {
+      id: 'languages',
+      title: '1. Programming Languages',
+      driveName: 'Primary Core Languages',
+      totalCapacity: '',
+      skills: [
+        { name: 'Java', level: 'Expert', color: '#859900', percentage: 30 },
+        { name: 'Python', level: 'Experienced', color: '#b58900', percentage: 20 },
+        { name: 'PHP', level: 'Experienced', color: '#d33682', percentage: 10 },
+        { name: 'C++', level: 'Experienced', color: '#dc322f', percentage: 10 },
+        { name: 'Go', level: 'Experienced', color: '#268bd2', percentage: 5 },
+        { name: 'Javascript', level: 'Skillful', color: '#cb4b16', percentage: 5 },
+        { name: 'Others (System & Learning)', level: 'Skillful', color: '#586e75', percentage: 20 },
+      ]
+    },
+    {
+      id: 'frameworks',
+      title: '2. Frameworks & Tools',
+      driveName: 'Frameworks & Infrastructure',
+      totalCapacity: '',
+      skills: [
+        { name: 'Symfony Framework', level: 'Expert', color: '#859900', percentage: 22 },
+        { name: 'Spring Boot Framework', level: 'Expert', color: '#2aa198', percentage: 22 },
+        { name: 'Quarkus Framework', level: 'Expert', color: '#d33682', percentage: 22 },
+        { name: 'Microservices', level: 'Expert', color: '#6c71c4', percentage: 18 },
+        { name: 'Amazon Web Service (AWS)', level: 'Experienced', color: '#cb4b16', percentage: 10 },
+        { name: 'NodeJS, ReactJS', level: 'Skillful', color: '#b58900', percentage: 6 },
+      ]
+    },
+    {
+      id: 'softskills',
+      title: '3. Soft Skills & Leadership',
+      driveName: 'Leadership & Competencies',
+      totalCapacity: '',
+      skills: [
+        { name: 'Team Lead', level: 'Expert', color: '#859900', percentage: 35 },
+        { name: 'Competitive Programming', level: 'Experienced', color: '#268bd2', percentage: 35 },
+        { name: 'Project Management', level: 'Experienced', color: '#b58900', percentage: 30 },
+      ]
+    }
+  ];
 
   return (
-    <div className="p-4 sm:p-6 flex flex-col md:flex-row gap-4 min-h-[520px] text-[#93a1a1] font-sans select-none">
-      {/* Left Settings Sidebar (macOS System Settings Navigation) */}
-      <div className="w-full md:w-56 bg-[#073642]/90 border border-[#2aa198]/30 rounded-2xl p-3 flex flex-row md:flex-col gap-1 shrink-0 backdrop-blur-xl">
-        <div className="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-[#2aa198] font-mono hidden md:block">
-          System Settings
-        </div>
-
-        <button
-          onClick={() => setActiveTab('overview')}
-          className={`flex-1 md:flex-none flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'overview'
-              ? 'bg-[#002b36] text-[#eee8d5] border border-[#2aa198]/40 shadow-sm'
-              : 'text-[#839496] hover:text-[#eee8d5] hover:bg-[#002b36]/50'
-          }`}
-        >
-          <Laptop className="w-4 h-4 text-[#2aa198]" />
-          <span>Overview</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('report')}
-          className={`flex-1 md:flex-none flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'report'
-              ? 'bg-[#002b36] text-[#eee8d5] border border-[#2aa198]/40 shadow-sm'
-              : 'text-[#839496] hover:text-[#eee8d5] hover:bg-[#002b36]/50'
-          }`}
-        >
-          <Info className="w-4 h-4 text-[#268bd2]" />
-          <span>System Report</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('storage')}
-          className={`flex-1 md:flex-none flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'storage'
-              ? 'bg-[#002b36] text-[#eee8d5] border border-[#2aa198]/40 shadow-sm'
-              : 'text-[#839496] hover:text-[#eee8d5] hover:bg-[#002b36]/50'
-          }`}
-        >
-          <HardDrive className="w-4 h-4 text-[#b58900]" />
-          <span>Storage & Stack</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('updates')}
-          className={`flex-1 md:flex-none flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'updates'
-              ? 'bg-[#002b36] text-[#eee8d5] border border-[#2aa198]/40 shadow-sm'
-              : 'text-[#839496] hover:text-[#eee8d5] hover:bg-[#002b36]/50'
-          }`}
-        >
-          <RefreshCw className="w-4 h-4 text-[#859900]" />
-          <span>Software Update</span>
-        </button>
-      </div>
-
-      {/* Main Content View (macOS Settings Panel) */}
-      <div className="flex-1 bg-[#002b36]/90 border border-[#2aa198]/30 rounded-2xl p-6 backdrop-blur-2xl flex flex-col justify-between space-y-6">
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
-            {/* Top Device Hardware Graphic Card */}
-            <div className="flex flex-col sm:flex-row items-center gap-6 p-6 rounded-2xl bg-[#073642] border border-[#2aa198]/30 shadow-xl relative overflow-hidden">
-              {/* Laptop Graphic Badge */}
-              <div className="relative group shrink-0">
-                <div className="w-28 h-28 rounded-3xl bg-[#002b36] p-1 shadow-2xl flex items-center justify-center border border-[#2aa198]/40">
-                  <div className="w-full h-full bg-[#073642] rounded-[22px] flex flex-col items-center justify-center p-3 text-center border border-[#2aa198]/20">
-                    {profileData.avatarUrl ? (
-                      <img
-                        src={profileData.avatarUrl}
-                        alt={profileData.name}
-                        className="w-full h-full object-cover rounded-xl"
-                      />
-                    ) : (
-                      <Laptop className="w-12 h-12 text-[#2aa198]" />
-                    )}
-                  </div>
-                </div>
-                <span className="absolute -bottom-1 -right-1 p-1 rounded-full bg-[#859900] text-[#002b36] border border-[#859900] shadow font-bold">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                </span>
+    <div className="flex flex-col h-full min-h-[520px] bg-[#002b36] text-[#93a1a1] overflow-hidden select-none font-sans">
+      {/* Main Layout */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Finder Sidebar */}
+        <div className="w-48 bg-[#073642]/80 border-r border-[#2aa198]/20 p-3 flex flex-col justify-between shrink-0 hidden sm:flex font-sans overflow-y-auto custom-scrollbar">
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#2aa198] px-2 py-1 flex items-center justify-between font-mono">
+                <span>System Info</span>
+                <Laptop className="w-3 h-3 text-[#2aa198]" />
               </div>
 
-              {/* Specs Header */}
-              <div className="space-y-1 text-center sm:text-left flex-1">
-                <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-[#2aa198]/20 border border-[#2aa198]/40 text-[#2aa198] text-[10px] font-bold uppercase tracking-wider font-mono">
-                  <Sparkles className="w-3 h-3 text-[#2aa198]" />
-                  <span>Odmandakh OS • 15.4</span>
-                </div>
-                <h1 className="text-2xl font-black text-[#eee8d5] tracking-tight pt-1">
-                  {profileData.name}
-                </h1>
-                <p className="text-xs text-[#268bd2] font-semibold">
-                  {profileData.title}
-                </p>
-
-                <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2 text-[11px] font-mono text-[#93a1a1]">
-                  <span className="flex items-center text-[#eee8d5]">
-                    <MapPin className="w-3 h-3 mr-1 text-[#2aa198]" />
-                    {profileData.location}
-                  </span>
-                  <span>•</span>
-                  <span className="text-[#859900] font-semibold">{profileData.yearsExperience}+ Years Exp</span>
-                </div>
-              </div>
-            </div>
-
-            {/* macOS System Information Key Specs Grid */}
-            <div className="rounded-xl border border-[#2aa198]/30 bg-[#073642]/60 overflow-hidden divide-y divide-[#2aa198]/20 text-xs">
-              <div className="flex justify-between items-center p-3.5 px-4">
-                <span className="text-[#93a1a1] font-medium">Developer Chip</span>
-                <span className="font-bold text-[#eee8d5] font-mono flex items-center gap-1.5">
-                  <Cpu className="w-3.5 h-3.5 text-[#2aa198]" />
-                  Apple M3 Max (Full-Stack Engine)
-                </span>
-              </div>
-              <div className="flex justify-between items-center p-3.5 px-4">
-                <span className="text-[#93a1a1] font-medium">Unified Memory & Architecture</span>
-                <span className="font-bold text-[#268bd2] font-mono">64 GB (React 19, TypeScript, Go)</span>
-              </div>
-              <div className="flex justify-between items-center p-3.5 px-4">
-                <span className="text-[#93a1a1] font-medium">System Serial Number</span>
-                <span className="font-mono text-[#2aa198] font-bold bg-[#002b36] px-2 py-0.5 rounded border border-[#2aa198]/40">
-                  ODM-2026-ARCH-8821
-                </span>
-              </div>
-              <div className="flex justify-between items-center p-3.5 px-4">
-                <span className="text-[#93a1a1] font-medium">Primary Focus</span>
-                <span className="font-bold text-[#b58900] font-mono">Distributed Systems & Web Apps</span>
-              </div>
-            </div>
-
-            {/* Quick Action Links */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <a
-                href={profileData.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 rounded-xl bg-[#268bd2] text-[#eee8d5] hover:bg-[#268bd2]/90 text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5 cursor-pointer"
+              <button
+                onClick={() => setActiveTab('overview')}
+                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 transition-colors cursor-pointer ${
+                  activeTab === 'overview'
+                    ? 'bg-[#002b36] text-[#eee8d5] font-semibold border border-[#2aa198]/40'
+                    : 'text-[#839496] hover:bg-[#002b36]/50 hover:text-[#eee8d5]'
+                }`}
               >
-                <Linkedin className="w-3.5 h-3.5" />
-                <span>LinkedIn Profile</span>
-                <ExternalLink className="w-3 h-3 text-[#eee8d5]" />
-              </a>
+                <User className="w-3.5 h-3.5 text-[#2aa198]" />
+                <span className="truncate">Overview</span>
+              </button>
 
-              <a
-                href={profileData.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 rounded-xl bg-[#073642] hover:bg-[#073642]/80 text-[#eee8d5] text-xs font-bold transition-all border border-[#2aa198]/40 flex items-center space-x-1.5 cursor-pointer"
+              <button
+                onClick={() => setActiveTab('report')}
+                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 transition-colors cursor-pointer ${
+                  activeTab === 'report'
+                    ? 'bg-[#002b36] text-[#eee8d5] font-semibold border border-[#2aa198]/40'
+                    : 'text-[#839496] hover:bg-[#002b36]/50 hover:text-[#eee8d5]'
+                }`}
               >
-                <Github className="w-3.5 h-3.5 text-[#2aa198]" />
-                <span>GitHub Repos</span>
-                <ExternalLink className="w-3 h-3 text-[#2aa198]" />
-              </a>
+                <Info className="w-3.5 h-3.5 text-[#268bd2]" />
+                <span className="truncate">Technical report</span>
+              </button>
 
-              <a
-                href={`mailto:${profileData.email}`}
-                className="px-4 py-2 rounded-xl bg-[#073642] hover:bg-[#073642]/80 text-[#eee8d5] text-xs font-bold transition-all border border-[#2aa198]/40 flex items-center space-x-1.5 cursor-pointer"
+              <button
+                onClick={() => setActiveTab('skills')}
+                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 transition-colors cursor-pointer ${
+                  activeTab === 'skills'
+                    ? 'bg-[#002b36] text-[#eee8d5] font-semibold border border-[#2aa198]/40'
+                    : 'text-[#839496] hover:bg-[#002b36]/50 hover:text-[#eee8d5]'
+                }`}
               >
-                <Mail className="w-3.5 h-3.5 text-[#859900]" />
-                <span>Email Developer</span>
-              </a>
+                <HardDrive className="w-3.5 h-3.5 text-[#b58900]" />
+                <span className="truncate">Skills storage</span>
+              </button>
             </div>
           </div>
-        )}
+        </div>
 
-        {activeTab === 'report' && (
-          <div className="space-y-5">
-            <div className="flex items-center space-x-2 border-b border-[#2aa198]/20 pb-3">
-              <Info className="w-5 h-5 text-[#268bd2]" />
-              <h2 className="text-lg font-bold text-[#eee8d5]">Full System Bio & Technical Report</h2>
+        {/* Main Content Canvas */}
+        <div className="flex-1 bg-[#002b36] p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+          {activeTab === 'overview' && (
+            <div className="max-w-2xl mx-auto space-y-6">
+              {/* Section 1: Photo & Header */}
+              <div className="flex flex-col items-center text-center space-y-3 py-2">
+                <div className="w-28 h-28 rounded-full overflow-hidden shrink-0 shadow-lg">
+                  <img
+                    src={profileData.avatarUrl}
+                    alt="Odmandakh Battulga"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <h1 className="text-2xl font-black text-[#eee8d5] tracking-tight">
+                    Odmandakh Battulga
+                  </h1>
+                  <p className="text-xs font-semibold text-[#2aa198] font-mono">
+                    Senior Back-End Engineer
+                  </p>
+                </div>
+              </div>
+
+              {/* Section 2: Details Grid */}
+              <div className="p-5 rounded-2xl bg-[#073642]/60 border border-[#2aa198]/30 space-y-3 text-xs">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono border-b border-[#2aa198]/20 pb-2">
+                  Developer Profile
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3 pt-1">
+                  <div className="flex items-center space-x-2.5 p-2.5 rounded-xl bg-[#002b36]/60 border border-[#2aa198]/20">
+                    <User className="w-4 h-4 text-[#2aa198] shrink-0" />
+                    <div>
+                      <span className="text-[10px] text-[#586e75] font-mono block">Nickname</span>
+                      <span className="font-bold text-[#eee8d5]">Dom</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2.5 p-2.5 rounded-xl bg-[#002b36]/60 border border-[#2aa198]/20">
+                    <MapPin className="w-4 h-4 text-[#268bd2] shrink-0" />
+                    <div>
+                      <span className="text-[10px] text-[#586e75] font-mono block">Location</span>
+                      <span className="font-bold text-[#eee8d5]">Ulaanbaatar, Mongolia</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2.5 p-2.5 rounded-xl bg-[#002b36]/60 border border-[#2aa198]/20">
+                    <Briefcase className="w-4 h-4 text-[#859900] shrink-0" />
+                    <div>
+                      <span className="text-[10px] text-[#586e75] font-mono block">Work</span>
+                      <span className="font-bold text-[#eee8d5]">ex AND</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2.5 p-2.5 rounded-xl bg-[#002b36]/60 border border-[#2aa198]/20">
+                    <GraduationCap className="w-4 h-4 text-[#b58900] shrink-0" />
+                    <div>
+                      <span className="text-[10px] text-[#586e75] font-mono block">Education</span>
+                      <span className="font-bold text-[#eee8d5]">National University of Mongolia (NUM)</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2.5 p-2.5 rounded-xl bg-[#002b36]/60 border border-[#2aa198]/20 sm:col-span-2">
+                    <Heart className="w-4 h-4 text-[#cb4b16] shrink-0" />
+                    <div>
+                      <span className="text-[10px] text-[#586e75] font-mono block">Hobbies & Interests</span>
+                      <span className="font-bold text-[#eee8d5]">Competitive Programming, Boardgame , Basketball, Computer Game</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 3: Action Buttons */}
+              <div className="grid grid-cols-3 gap-3 pt-2">
+                <a
+                  href={profileData.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2.5 px-3 rounded-xl bg-[#073642] hover:bg-[#073642]/80 text-[#eee8d5] text-xs font-bold transition-all border border-[#2aa198]/40 flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
+                >
+                  <Linkedin className="w-4 h-4 text-[#268bd2]" />
+                  <span>LinkedIn</span>
+                </a>
+
+                <a
+                  href={profileData.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2.5 px-3 rounded-xl bg-[#073642] hover:bg-[#073642]/80 text-[#eee8d5] text-xs font-bold transition-all border border-[#2aa198]/40 flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
+                >
+                  <Github className="w-4 h-4 text-[#2aa198]" />
+                  <span>GitHub</span>
+                </a>
+
+                <a
+                  href={`mailto:${profileData.email}`}
+                  className="py-2.5 px-3 rounded-xl bg-[#073642] hover:bg-[#073642]/80 text-[#eee8d5] text-xs font-bold transition-all border border-[#2aa198]/40 flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
+                >
+                  <Mail className="w-4 h-4 text-[#859900]" />
+                  <span>Email</span>
+                </a>
+              </div>
             </div>
+          )}
 
-            <div className="p-4 rounded-xl bg-[#073642] border border-[#2aa198]/30 space-y-3 text-xs leading-relaxed text-[#93a1a1]">
-              <p className="font-medium text-[#eee8d5]">{profileData.bio}</p>
-              <p>
-                Specialized in architecting high-throughput distributed backends, ultra-responsive React client user interfaces, and cloud infrastructure pipelines on GCP and AWS.
-              </p>
+          {activeTab === 'report' && (
+            <div className="max-w-2xl mx-auto space-y-5">
+              <div className="flex items-center space-x-2 border-b border-[#2aa198]/20 pb-3">
+                <Info className="w-5 h-5 text-[#268bd2]" />
+                <h2 className="text-lg font-bold text-[#eee8d5]">Technical report</h2>
+              </div>
+
+              <div className="space-y-3">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono block">
+                  Engineering Highlights
+                </span>
+                <div className="grid sm:grid-cols-2 gap-3 text-xs">
+                  {profileData.stats.map((stat, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl bg-[#073642]/80 border border-[#2aa198]/30 space-y-1 shadow-md">
+                      <span className="text-[10px] text-[#586e75] uppercase font-mono block">{stat.label}</span>
+                      <span className="text-xl font-bold text-[#b58900] font-mono">{stat.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Technical System Capabilities */}
+              <div className="p-5 rounded-2xl bg-[#073642]/60 border border-[#2aa198]/30 space-y-3 text-xs font-sans">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono border-b border-[#2aa198]/20 pb-2">
+                  System Architecture & Technical Focus
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3 pt-1">
+                  <div className="p-3 rounded-xl bg-[#002b36]/60 border border-[#2aa198]/20 space-y-1">
+                    <span className="text-[11px] font-bold text-[#eee8d5] block">Backend Architecture</span>
+                    <span className="text-[#839496] text-[11px]">Distributed systems, microservices, serverless on AWS</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#002b36]/60 border border-[#2aa198]/20 space-y-1">
+                    <span className="text-[11px] font-bold text-[#eee8d5] block">Machine Learning Solutions</span>
+                    <span className="text-[#839496] text-[11px]">Model integration, scalable pipelines, optimization</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#002b36]/60 border border-[#2aa198]/20 space-y-1">
+                    <span className="text-[11px] font-bold text-[#eee8d5] block">Algorithmic Excellence</span>
+                    <span className="text-[#839496] text-[11px]">Competitive programming foundation, problem solving</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#002b36]/60 border border-[#2aa198]/20 space-y-1">
+                    <span className="text-[11px] font-bold text-[#eee8d5] block">Security & Performance</span>
+                    <span className="text-[#839496] text-[11px]">High-throughput systems, secure API design, monitoring</span>
+                  </div>
+                </div>
+              </div>
             </div>
+          )}
 
-            <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono block">
-                Engineering Highlights
-              </span>
-              <div className="grid sm:grid-cols-2 gap-3 text-xs">
-                {profileData.stats.map((stat, idx) => (
-                  <div key={idx} className="p-3 rounded-xl bg-[#073642] border border-[#2aa198]/30 space-y-1">
-                    <span className="text-[10px] text-[#586e75] uppercase font-mono block">{stat.label}</span>
-                    <span className="text-base font-bold text-[#b58900] font-mono">{stat.value}</span>
+          {activeTab === 'skills' && (
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="flex items-center justify-between border-b border-[#2aa198]/20 pb-3">
+                <div className="flex items-center space-x-2">
+                  <HardDrive className="w-5 h-5 text-[#b58900]" />
+                  <h2 className="text-lg font-bold text-[#eee8d5]">Skills storage</h2>
+                </div>
+                <span className="text-xs font-mono text-[#586e75]">System Memory Allocation</span>
+              </div>
+
+              {/* macOS System Settings Storage Bars */}
+              <div className="space-y-6">
+                {skillGroups.map((group) => (
+                  <div 
+                    key={group.id} 
+                    className="p-5 rounded-2xl bg-[#073642]/90 border border-[#2aa198]/30 shadow-lg space-y-4 font-sans"
+                  >
+                    {/* macOS Storage Bar Header */}
+                    <div className="flex justify-between items-baseline">
+                      <div className="space-y-0.5">
+                        <h3 className="text-sm font-bold text-[#eee8d5] tracking-wide">{group.title}</h3>
+                        <p className="text-[11px] font-mono text-[#586e75]">{group.driveName}</p>
+                      </div>
+                    </div>
+
+                    {/* macOS Storage Bar Visualization */}
+                    <div className="relative">
+                      <div className="h-5 w-full bg-[#002b36] rounded-lg p-0.5 border border-[#2aa198]/20 flex overflow-hidden gap-0.5 shadow-inner">
+                        {group.skills.map((skill, sIdx) => {
+                          const isHovered = hoveredSkill === `${group.id}-${skill.name}`;
+                          return (
+                            <div
+                              key={sIdx}
+                              onMouseEnter={() => setHoveredSkill(`${group.id}-${skill.name}`)}
+                              onMouseLeave={() => setHoveredSkill(null)}
+                              style={{ 
+                                width: `${skill.percentage}%`,
+                                backgroundColor: skill.color
+                              }}
+                              className={`h-full transition-all duration-200 cursor-pointer relative ${
+                                isHovered ? 'brightness-125 scale-y-110 z-10 rounded-sm shadow-md' : 'opacity-90 hover:opacity-100'
+                              }`}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Legend & Hover Info */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-2 pt-1 border-t border-[#2aa198]/10 text-xs">
+                      {group.skills.map((skill, sIdx) => {
+                        const isHovered = hoveredSkill === `${group.id}-${skill.name}`;
+                        return (
+                          <div
+                            key={sIdx}
+                            onMouseEnter={() => setHoveredSkill(`${group.id}-${skill.name}`)}
+                            onMouseLeave={() => setHoveredSkill(null)}
+                            className={`flex items-center space-x-1.5 px-2 py-1 rounded-md transition-all cursor-pointer ${
+                              isHovered 
+                                ? 'bg-[#002b36] text-[#eee8d5] border border-[#2aa198]/40 shadow-sm' 
+                                : 'text-[#839496] hover:text-[#eee8d5]'
+                            }`}
+                          >
+                            <span 
+                              className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" 
+                              style={{ backgroundColor: skill.color }}
+                            />
+                            <span className="font-semibold text-[11px]">{skill.name}</span>
+                            
+                            {/* Hover Badge showing Proficiency Level */}
+                            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-bold transition-opacity ${
+                              isHovered 
+                                ? 'bg-[#2aa198]/20 text-[#2aa198] border border-[#2aa198]/30 opacity-100' 
+                                : 'text-[#586e75] opacity-70'
+                            }`}>
+                              {skill.level}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-        )}
-
-        {activeTab === 'storage' && (
-          <div className="space-y-5">
-            <div className="flex items-center space-x-2 border-b border-[#2aa198]/20 pb-3">
-              <HardDrive className="w-5 h-5 text-[#b58900]" />
-              <h2 className="text-lg font-bold text-[#eee8d5]">System Storage & Memory Allocation</h2>
-            </div>
-
-            {/* macOS Bar Meter */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs text-[#93a1a1]">
-                <span>Memory Allocation (64 GB Total)</span>
-                <span className="text-[#859900] font-mono font-bold">12 GB Free</span>
-              </div>
-              <div className="h-4 rounded-full bg-[#002b36] overflow-hidden flex p-0.5 border border-[#2aa198]/30">
-                <div className="h-full bg-[#268bd2] rounded-l-full w-[45%]" title="Frontend (45%)" />
-                <div className="h-full bg-[#2aa198] w-[30%]" title="Backend & Go (30%)" />
-                <div className="h-full bg-[#6c71c4] w-[15%]" title="Cloud & DevOps (15%)" />
-                <div className="h-full bg-[#073642] rounded-r-full w-[10%]" title="Free Space" />
-              </div>
-              <div className="flex flex-wrap gap-4 pt-2 text-[11px] text-[#93a1a1] font-mono">
-                <span className="flex items-center"><span className="w-2.5 h-2.5 rounded-full bg-[#268bd2] mr-1.5" /> React & Frontend (45%)</span>
-                <span className="flex items-center"><span className="w-2.5 h-2.5 rounded-full bg-[#2aa198] mr-1.5" /> Go & Node Backend (30%)</span>
-                <span className="flex items-center"><span className="w-2.5 h-2.5 rounded-full bg-[#6c71c4] mr-1.5" /> GCP / Docker / CI/CD (15%)</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'updates' && (
-          <div className="space-y-5">
-            <div className="flex items-center space-x-2 border-b border-[#2aa198]/20 pb-3">
-              <RefreshCw className="w-5 h-5 text-[#859900]" />
-              <h2 className="text-lg font-bold text-[#eee8d5]">Software Update Center</h2>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-[#073642] border border-[#2aa198]/30 space-y-4 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between">
-              <div className="space-y-1">
-                <h3 className="font-bold text-[#eee8d5] text-sm">Odmandakh OS 15.4 (2026.08 Build)</h3>
-                <p className="text-xs text-[#93a1a1]">
-                  Includes security enhancements, performance boosts, and updated project repositories.
-                </p>
-                {updateStatus && (
-                  <p className="text-xs text-[#2aa198] font-semibold pt-1 flex items-center gap-1 justify-center sm:justify-start font-mono">
-                    <Check className="w-3.5 h-3.5 text-[#859900]" />
-                    <span>{updateStatus}</span>
-                  </p>
-                )}
-              </div>
-
-              <button
-                onClick={handleCheckUpdates}
-                disabled={checkingUpdates}
-                className="px-4 py-2 rounded-xl bg-[#859900] hover:bg-[#859900]/90 text-[#002b36] disabled:opacity-50 text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer flex items-center space-x-1.5"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${checkingUpdates ? 'animate-spin' : ''}`} />
-                <span>{checkingUpdates ? 'Checking...' : 'Check for Updates'}</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Footer info bar */}
-        <div className="pt-3 border-t border-[#2aa198]/20 flex justify-between items-center text-[10px] font-mono text-[#586e75]">
-          <span>Odmandakh OS Settings • Build 2026.08</span>
-          <span>Apple M3 Max Architecture</span>
+          )}
         </div>
       </div>
     </div>

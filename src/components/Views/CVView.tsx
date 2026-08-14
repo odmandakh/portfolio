@@ -3,8 +3,8 @@ import {
   FileText, 
   Download, 
   Printer, 
-  ZoomIn, 
-  ZoomOut, 
+  Minus, 
+  Plus, 
   ChevronLeft, 
   ChevronRight, 
   PanelLeft, 
@@ -78,11 +78,11 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
   };
 
   const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 15, 150));
+    setZoomLevel(prev => Math.min(prev + 15, 160));
   };
 
   const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 15, 70));
+    setZoomLevel(prev => Math.max(prev - 15, 60));
   };
 
   const scrollToPage = (pageNum: number) => {
@@ -94,7 +94,7 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#002b36] text-[#eee8d5] font-sans overflow-hidden min-h-[520px]">
+    <div className="flex flex-col h-full bg-[#002b36] text-[#eee8d5] font-sans overflow-hidden min-h-[520px] relative">
       {/* macOS Preview Toolbar */}
       <div className="bg-[#073642] border-b border-[#2aa198]/30 px-3 py-2 flex flex-wrap items-center justify-between gap-2 select-none text-xs text-[#2aa198] shrink-0">
         {/* Left Toolbar Controls */}
@@ -116,49 +116,51 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
             <button
               onClick={() => scrollToPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="hover:text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+              className="hover:text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed text-[#839496] hover:text-[#eee8d5]"
               title="Previous Page"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-            <span className="font-mono text-[11px] px-1 text-zinc-200">
+            <span className="font-mono text-[11px] px-1 text-[#eee8d5]">
               {currentPage} / {totalPages}
             </span>
             <button
               onClick={() => scrollToPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
-              className="hover:text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+              className="hover:text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed text-[#839496] hover:text-[#eee8d5]"
               title="Next Page"
             >
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="h-4 w-px bg-zinc-700 hidden sm:block" />
+          <div className="h-4 w-px bg-[#2aa198]/30 hidden sm:block" />
 
-          {/* Zoom Controls */}
-          <div className="hidden sm:flex items-center space-x-1 bg-zinc-800/80 rounded-md px-2 py-1 border border-zinc-700">
+          {/* Zoom Controls styled similar to Skill Tree */}
+          <div className="hidden sm:flex items-center space-x-1 bg-[#002b36] rounded-md px-1.5 py-1 border border-[#2aa198]/30">
             <button
               onClick={handleZoomOut}
-              className="hover:text-white cursor-pointer"
-              title="Zoom Out"
+              disabled={zoomLevel <= 60}
+              className="p-1 rounded hover:bg-[#073642] disabled:opacity-30 text-[#2aa198] transition-colors cursor-pointer"
+              title="Zoom Out (-)"
             >
-              <ZoomOut className="w-3.5 h-3.5" />
+              <Minus className="w-3.5 h-3.5" />
             </button>
-            <span className="font-mono text-[11px] px-1.5 min-w-[42px] text-center text-zinc-200">
+            <span className="font-mono text-[11px] font-bold px-1.5 min-w-[42px] text-center text-[#eee8d5]">
               {zoomLevel}%
             </span>
             <button
               onClick={handleZoomIn}
-              className="hover:text-white cursor-pointer"
-              title="Zoom In"
+              disabled={zoomLevel >= 160}
+              className="p-1 rounded hover:bg-[#073642] disabled:opacity-30 text-[#2aa198] transition-colors cursor-pointer"
+              title="Zoom In (+)"
             >
-              <ZoomIn className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setZoomLevel(100)}
-              className="text-[10px] text-zinc-400 hover:text-white ml-1 px-1 py-0.5 rounded bg-zinc-700/50 cursor-pointer"
-              title="Reset Zoom"
+              className="text-[10px] font-mono text-[#839496] hover:text-[#eee8d5] ml-1 px-1.5 py-0.5 rounded bg-[#073642]/80 hover:bg-[#073642] border border-[#2aa198]/20 cursor-pointer transition-colors"
+              title="Reset Zoom to 100%"
             >
               Reset
             </button>
@@ -166,28 +168,28 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
         </div>
 
         {/* Center Title Badge */}
-        <div className="hidden md:flex items-center space-x-1.5 font-medium text-zinc-200">
-          <FileText className="w-4 h-4 text-zinc-400" />
-          <span>CV_Odmandakh_2026.pdf</span>
+        <div className="hidden md:flex items-center space-x-1.5 font-mono text-xs text-[#839496]">
+          <FileText className="w-4 h-4 text-[#2aa198]" />
+          <span className="text-[#eee8d5] font-semibold">CV_Odmandakh_2026.pdf</span>
         </div>
 
         {/* Right Action Tools */}
         <div className="flex items-center space-x-2">
           {/* Search Bar */}
-          <div className="hidden lg:flex items-center bg-zinc-900 border border-zinc-700 rounded-md px-2 py-1 space-x-1.5 w-36 focus-within:w-48 transition-all">
-            <Search className="w-3 h-3 text-zinc-400" />
+          <div className="hidden lg:flex items-center bg-[#002b36] border border-[#2aa198]/30 rounded-md px-2 py-1 space-x-1.5 w-36 focus-within:w-48 transition-all">
+            <Search className="w-3 h-3 text-[#586e75]" />
             <input
               type="text"
               placeholder="Search PDF..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent border-none text-[11px] text-zinc-200 focus:outline-none w-full placeholder-zinc-500"
+              className="bg-transparent border-none text-[11px] text-[#eee8d5] focus:outline-none w-full placeholder-[#586e75] font-mono"
             />
           </div>
 
           <button
             onClick={handlePrint}
-            className="p-1.5 rounded-md hover:bg-zinc-700/60 text-zinc-300 hover:text-white transition-colors cursor-pointer"
+            className="p-1.5 rounded-md hover:bg-[#002b36] text-[#839496] hover:text-[#2aa198] transition-colors cursor-pointer border border-transparent hover:border-[#2aa198]/30"
             title="Print Document"
           >
             <Printer className="w-4 h-4" />
@@ -195,10 +197,10 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
 
           <button
             onClick={handleDownload}
-            className={`px-2.5 py-1 rounded-md text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer ${
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer font-mono ${
               downloaded 
-                ? 'bg-zinc-800 text-white border border-zinc-700' 
-                : 'bg-zinc-100 hover:bg-white text-zinc-900 shadow-sm'
+                ? 'bg-[#002b36] text-[#859900] border border-[#859900]/50' 
+                : 'bg-[#859900] hover:bg-[#859900]/90 text-[#002b36] shadow-sm font-bold'
             }`}
             title="Download PDF File"
           >
@@ -209,11 +211,11 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
       </div>
 
       {/* Main Preview Container */}
-      <div className="flex-1 flex overflow-hidden relative bg-[#121212]">
+      <div className="flex-1 flex overflow-hidden relative bg-[#001d24]">
         {/* Left Thumbnails Sidebar */}
         {showThumbnails && (
-          <div className="w-40 bg-[#1a1a1a] border-r border-zinc-800 p-3 overflow-y-auto shrink-0 hidden md:flex flex-col space-y-4 select-none custom-scrollbar">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 px-1">
+          <div className="w-40 bg-[#002b36] border-r border-[#2aa198]/20 p-3 overflow-y-auto shrink-0 hidden md:flex flex-col space-y-4 select-none custom-scrollbar">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-[#586e75] px-1 font-mono">
               Page Thumbnails
             </div>
 
@@ -221,7 +223,7 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
             <div 
               onClick={() => scrollToPage(1)}
               className={`group cursor-pointer space-y-1 p-1 rounded-lg transition-all ${
-                currentPage === 1 ? 'ring-2 ring-zinc-500 bg-zinc-800/50' : 'hover:bg-white/5'
+                currentPage === 1 ? 'ring-2 ring-[#2aa198] bg-[#073642]' : 'hover:bg-[#073642]/50'
               }`}
             >
               <div className="w-full aspect-[1/1.4] bg-white rounded shadow-md p-2 text-[4px] leading-[5px] text-zinc-800 overflow-hidden relative select-none pointer-events-none">
@@ -233,7 +235,7 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
                   <div className="bg-zinc-200 h-1 w-5/6 rounded" />
                 </div>
               </div>
-              <div className="text-center text-[10px] font-mono text-zinc-400 group-hover:text-white">
+              <div className="text-center text-[10px] font-mono text-[#839496] group-hover:text-[#eee8d5]">
                 Page 1
               </div>
             </div>
@@ -242,7 +244,7 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
             <div 
               onClick={() => scrollToPage(2)}
               className={`group cursor-pointer space-y-1 p-1 rounded-lg transition-all ${
-                currentPage === 2 ? 'ring-2 ring-zinc-500 bg-zinc-800/50' : 'hover:bg-white/5'
+                currentPage === 2 ? 'ring-2 ring-[#2aa198] bg-[#073642]' : 'hover:bg-[#073642]/50'
               }`}
             >
               <div className="w-full aspect-[1/1.4] bg-white rounded shadow-md p-2 text-[4px] leading-[5px] text-zinc-800 overflow-hidden relative select-none pointer-events-none">
@@ -253,7 +255,7 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
                   <div className="bg-zinc-200 h-1 w-4/5 rounded" />
                 </div>
               </div>
-              <div className="text-center text-[10px] font-mono text-zinc-400 group-hover:text-white">
+              <div className="text-center text-[10px] font-mono text-[#839496] group-hover:text-[#eee8d5]">
                 Page 2
               </div>
             </div>
@@ -355,10 +357,10 @@ ${resumeData.coreSkills.map(cs => `* ${cs.category}: ${cs.items.join(', ')}`).jo
             </div>
 
             {/* PAGE BREAK INDICATOR */}
-            <div className="flex items-center space-x-3 text-xs font-mono text-zinc-500 select-none py-2">
-              <span className="w-12 h-px bg-zinc-700" />
+            <div className="flex items-center space-x-3 text-xs font-mono text-[#586e75] select-none py-2">
+              <span className="w-12 h-px bg-[#2aa198]/30" />
               <span>PAGE 2 BREAK</span>
-              <span className="w-12 h-px bg-zinc-700" />
+              <span className="w-12 h-px bg-[#2aa198]/30" />
             </div>
 
             {/* PAGE 2 */}

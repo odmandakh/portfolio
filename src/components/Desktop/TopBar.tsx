@@ -51,7 +51,6 @@ export const TopBar: React.FC<TopBarProps> = ({
             className="flex items-center gap-1.5 hover:text-[#eee8d5] transition-colors font-bold text-[#eee8d5] cursor-pointer"
             title="Odmandakh OS Menu"
           >
-            <span className="text-[#2aa198]"></span>
             <span>Odmandakh OS</span>
           </button>
 

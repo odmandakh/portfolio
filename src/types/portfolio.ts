@@ -41,17 +41,26 @@ export interface Project {
 export interface SkillNode {
   id: string;
   label: string;
-  category: 'Languages' | 'Frontend' | 'Backend & Cloud' | 'DevOps & Infra' | 'AI & Systems';
-  level: 'Expert' | 'Proficient' | 'Familiar';
+  category: string;
+  branch: 'languages' | 'frameworks' | 'soft_skills';
+  status: 'mastered' | 'learning' | 'planned';
+  tier: number;
+  x: number; // 0 - 100 percentage
+  y: number; // 0 - 100 percentage
+  parentIds: string[];
+  maxPoints: number;
+  defaultPoints: number;
+  level: 'Expert' | 'Experienced' | 'Skillful' | 'Proficient' | 'Planned';
   years: string;
   description: string;
+  statBonus?: string;
   iconName: string;
   relatedSkillIds: string[];
   projectIds: string[];
 }
 
 export interface SkillCategory {
-  id: string;
+  id: 'languages' | 'frameworks' | 'soft_skills';
   name: string;
   description: string;
   color: string;
@@ -61,6 +70,8 @@ export interface Certificate {
   id: string;
   categoryId: string;
   categoryName: string;
+  tag?: string;
+  outdated?: boolean;
   title: string;
   issuer: string;
   issueDate: string;

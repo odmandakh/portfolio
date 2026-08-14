@@ -15,14 +15,14 @@ export const desktopItems: DesktopItem[] = [
     type: 'folder',
     icon: 'FolderAward',
     badge: '6',
-    description: 'AWS, CKA, Meta & GCP certifications'
+    description: 'Certificates'
   },
   {
     id: 'about',
     title: 'About Me',
     type: 'app',
     icon: 'UserCheck',
-    description: 'macOS Settings style profile summary'
+    description: 'About Me'
   },
   {
     id: 'skills',
@@ -30,14 +30,14 @@ export const desktopItems: DesktopItem[] = [
     type: 'app',
     icon: 'Network',
     badge: 'Interactive',
-    description: 'Connected skill node graph & dependencies'
+    description: 'Skills Tree'
   },
   {
     id: 'cv',
     title: 'CV.pdf',
     type: 'file',
     icon: 'FileText',
-    description: 'Curriculum Vitae / Resume'
+    description: ''
   },
   {
     id: 'experience',
@@ -45,7 +45,7 @@ export const desktopItems: DesktopItem[] = [
     type: 'widget',
     icon: 'Briefcase',
     badge: '6+ YOE',
-    description: 'Career progression & role timeline'
+    description: 'Experience'
   },
   {
     id: 'github',
@@ -53,7 +53,7 @@ export const desktopItems: DesktopItem[] = [
     type: 'widget',
     icon: 'Github',
     badge: '2.4k',
-    description: 'Contribution heatmaps & open source'
+    description: 'GitHub Activity'
   },
   {
     id: 'leetcode',
@@ -61,6 +61,6 @@ export const desktopItems: DesktopItem[] = [
     type: 'widget',
     icon: 'Code',
     badge: '642',
-    description: 'Algorithmic problem solving record'
+    description: 'LeetCode Stats'
   }
 ];

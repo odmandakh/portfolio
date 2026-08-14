@@ -20,12 +20,17 @@ import {
   CheckCircle2, 
   X,
   FileCode,
-  Info
+  Info,
+  Award
 } from 'lucide-react';
 import { projectsData } from '../../data/projects';
-import { Project } from '../../types/portfolio';
+import { Project, DesktopWindowId } from '../../types/portfolio';
 
-export const ProjectsView: React.FC = () => {
+interface ProjectsViewProps {
+  onNavigate?: (id: DesktopWindowId) => void;
+}
+
+export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedTag, setSelectedTag] = useState<string>('All');
@@ -130,6 +135,27 @@ export const ProjectsView: React.FC = () => {
         {/* Finder Sidebar */}
         <div className="w-48 bg-[#073642]/80 border-r border-[#2aa198]/20 p-3 flex flex-col justify-between shrink-0 hidden sm:flex font-sans overflow-y-auto custom-scrollbar">
           <div className="space-y-4">
+            {/* Locations Group */}
+            <div className="space-y-1">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#2aa198] px-2 py-1 flex items-center justify-between font-mono">
+                <span>Locations</span>
+                <HardDrive className="w-3 h-3 text-[#2aa198]" />
+              </div>
+              <button
+                className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 transition-colors cursor-pointer bg-[#002b36] text-[#eee8d5] font-semibold border border-[#2aa198]/40"
+              >
+                <Folder className="w-3.5 h-3.5 text-[#268bd2] fill-[#268bd2]/20" />
+                <span className="truncate">Projects</span>
+              </button>
+              <button
+                onClick={() => onNavigate?.('certificates')}
+                className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 transition-colors cursor-pointer text-[#839496] hover:bg-[#002b36]/50 hover:text-[#eee8d5]"
+              >
+                <Award className="w-3.5 h-3.5 text-[#b58900]" />
+                <span className="truncate">Certificates</span>
+              </button>
+            </div>
+
             {/* Categories Group */}
             <div className="space-y-1">
               <div className="text-[10px] font-bold uppercase tracking-wider text-[#2aa198] px-2 py-1 flex items-center justify-between font-mono">
@@ -306,12 +332,9 @@ export const ProjectsView: React.FC = () => {
                   className="group flex flex-col items-center text-center p-3 rounded-xl hover:bg-[#073642]/60 transition-all cursor-pointer space-y-2 border border-transparent hover:border-[#2aa198]/30"
                 >
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-[#073642] border border-[#2aa198]/30 flex items-center justify-center text-[#268bd2] group-hover:scale-105 group-hover:border-[#2aa198]/60 transition-transform shadow-md">
-                      <Folder className="w-9 h-9 fill-[#268bd2]/20 text-[#268bd2]" />
+                    <div className="w-20 h-20 rounded-2xl bg-[#073642] border border-[#2aa198]/30 flex items-center justify-center text-[#268bd2] group-hover:scale-105 group-hover:border-[#2aa198]/60 transition-transform shadow-md">
+                      <Folder className="w-11 h-11 fill-[#268bd2]/20 text-[#268bd2]" />
                     </div>
-                    <span className="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-[#002b36] border border-[#2aa198]/30 text-[#2aa198]">
-                      {project.category}
-                    </span>
                   </div>
 
                   <div>
