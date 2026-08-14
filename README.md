@@ -16,9 +16,11 @@ No backend, no database. All portfolio content is static, typed data (see [Conte
 
 ## Getting started
 
+Requires [Bun](https://bun.sh).
+
 ```bash
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 The dev server runs at `http://localhost:3000`.
@@ -27,9 +29,9 @@ Other scripts:
 
 | Command | Description |
 |---|---|
-| `npm run build` | Production build to `dist/` |
-| `npm run preview` | Preview the production build locally |
-| `npm run lint` | Typecheck only (`tsc --noEmit`, no ESLint configured) |
+| `bun run build` | Production build to `dist/` |
+| `bun run preview` | Preview the production build locally |
+| `bun run lint` | Typecheck only (`tsc --noEmit`, no ESLint configured) |
 
 ## Project structure
 
