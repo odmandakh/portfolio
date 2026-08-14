@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { profileData } from '../../data/profile';
 
+const WEB3FORMS_ACCESS_KEY = 'a1898665-5a17-4593-bf8a-80bab5fa5c18';
+
 export const ContactView: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -22,19 +24,42 @@ export const ContactView: React.FC = () => {
 
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [submittedMessage, setSubmittedMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
     setStatus('submitting');
+    setErrorMessage('');
 
-    // Simulate reliable message dispatch
-    setTimeout(() => {
-      setStatus('success');
-      setSubmittedMessage(formData.message);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 1000);
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject || `New portfolio message from ${formData.name}`,
+          message: formData.message
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setStatus('success');
+        setSubmittedMessage(formData.message);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setStatus('error');
+        setErrorMessage(result.message || 'Something went wrong. Please try again.');
+      }
+    } catch {
+      setStatus('error');
+      setErrorMessage('Network error. Please check your connection and try again.');
+    }
   };
 
   return (
@@ -196,6 +221,12 @@ export const ContactView: React.FC = () => {
                 className="w-full p-3 rounded-xl bg-[#073642] border border-[#2aa198]/30 text-xs text-[#eee8d5] placeholder-[#586e75] focus:outline-none focus:border-[#2aa198] resize-none"
               />
             </div>
+
+            {status === 'error' && (
+              <div className="p-3 rounded-xl bg-[#dc322f]/10 border border-[#dc322f]/30 text-xs text-[#dc322f] font-mono">
+                {errorMessage}
+              </div>
+            )}
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
               <span className="text-[11px] text-[#586e75] flex items-center gap-1 font-mono">

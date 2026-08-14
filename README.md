@@ -2,7 +2,7 @@
 
 A personal portfolio presented as a simple, macOS-inspired desktop. Projects, skills, experience, certificates, and contact info live behind familiar desktop objects — folders, files, widgets, and apps — instead of a conventional scrolling resume page.
 
-**Live site:** [odmandakh.me](https://odmandakh.me)
+**Live site:** [odmandakh.dev](https://odmandakh.dev)
 
 ## Stack
 

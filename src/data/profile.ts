@@ -2,7 +2,7 @@ import { ProfileData } from '../types/portfolio';
 
 export const profileData: ProfileData = {
   name: 'Odmandakh',
-  title: 'Senior Full-Stack & Systems Engineer',
+  title: 'Senior Back-end Developer',
   role: 'Staff Software Architect',
   careerStartDate: '2019-01-01',
   location: 'Ulaanbaatar, Mongolia',
