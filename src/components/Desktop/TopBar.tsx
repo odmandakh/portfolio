@@ -48,7 +48,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         <div className="relative">
           <button
             onClick={() => setShowAppleMenu(!showAppleMenu)}
-            className="flex items-center gap-1.5 hover:text-[#eee8d5] transition-colors font-bold text-[#eee8d5] cursor-pointer"
+            className="flex items-center gap-1.5 hover:text-[#eee8d5] transition-colors font-bold text-[#eee8d5] cursor-pointer whitespace-nowrap shrink-0"
             title="Odmandakh OS Menu"
           >
             <span>Odmandakh OS</span>
@@ -110,7 +110,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         </div>
 
         {activeWindowName && activeWindowName !== 'Desktop' && (
-          <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#2aa198]/15 border border-[#2aa198]/30 text-[#2aa198] font-mono font-bold ml-1">
+          <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#2aa198]/15 border border-[#2aa198]/30 text-[#2aa198] font-mono font-bold ml-1 whitespace-nowrap truncate max-w-[35vw] sm:max-w-none">
             {activeWindowName}
           </span>
         )}
@@ -125,8 +125,8 @@ export const TopBar: React.FC<TopBarProps> = ({
         </div>
 
         {/* Time & Date */}
-        <div className="flex items-center gap-3 font-mono text-[11px]">
-          <span className="text-[#586e75]">{date}</span>
+        <div className="flex items-center gap-3 font-mono text-[11px] whitespace-nowrap shrink-0">
+          <span className="hidden sm:inline text-[#586e75]">{date}</span>
           <span className="text-[#eee8d5] font-semibold">{time}</span>
         </div>
       </div>
