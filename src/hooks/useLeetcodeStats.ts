@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { LeetcodeStats } from '../types/portfolio';
+import { readSessionCache, writeSessionCache } from '../utils/sessionCache';
+
+const CACHE_TTL_MS = 15 * 60 * 1000;
 
 interface LeetcodeApiResponse {
   totalSolved: number;
@@ -45,8 +48,17 @@ export function useLeetcodeStats(username: string) {
 
   useEffect(() => {
     let cancelled = false;
+    const cacheKey = `leetcode-stats:${username}`;
 
     async function load() {
+      const fresh = readSessionCache<LeetcodeStats>(cacheKey, CACHE_TTL_MS);
+      if (fresh) {
+        setData(fresh);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
@@ -61,30 +73,36 @@ export function useLeetcodeStats(username: string) {
             ? `${((allSubs.count / allSubs.submissions) * 100).toFixed(1)}%`
             : 'N/A';
 
-        if (!cancelled) {
-          setData({
-            username,
-            totalSolved: json.totalSolved,
-            totalQuestions: json.totalQuestions,
-            easySolved: json.easySolved,
-            easyTotal: json.totalEasy,
-            mediumSolved: json.mediumSolved,
-            mediumTotal: json.totalMedium,
-            hardSolved: json.hardSolved,
-            hardTotal: json.totalHard,
-            acceptanceRate,
-            ranking: `#${json.ranking.toLocaleString()}`,
-            streakDays: computeStreakDays(json.submissionCalendar),
-            recentSubmissions: json.recentSubmissions.slice(0, 4).map((s) => ({
-              title: s.title,
-              timeAgo: timeAgo(Number(s.timestamp)),
-              lang: s.lang
-            }))
-          });
-        }
+        const result: LeetcodeStats = {
+          username,
+          totalSolved: json.totalSolved,
+          totalQuestions: json.totalQuestions,
+          easySolved: json.easySolved,
+          easyTotal: json.totalEasy,
+          mediumSolved: json.mediumSolved,
+          mediumTotal: json.totalMedium,
+          hardSolved: json.hardSolved,
+          hardTotal: json.totalHard,
+          acceptanceRate,
+          ranking: `#${json.ranking.toLocaleString()}`,
+          streakDays: computeStreakDays(json.submissionCalendar),
+          recentSubmissions: json.recentSubmissions.slice(0, 4).map((s) => ({
+            title: s.title,
+            timeAgo: timeAgo(Number(s.timestamp)),
+            lang: s.lang
+          }))
+        };
+
+        writeSessionCache(cacheKey, result);
+        if (!cancelled) setData(result);
       } catch (err) {
+        const stale = readSessionCache<LeetcodeStats>(cacheKey);
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Failed to load LeetCode data');
+          if (stale) {
+            setData(stale);
+          } else {
+            setError(err instanceof Error ? err.message : 'Failed to load LeetCode data');
+          }
         }
       } finally {
         if (!cancelled) setLoading(false);

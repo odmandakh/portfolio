@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { GithubStats, GithubDay } from '../types/portfolio';
+import { readSessionCache, writeSessionCache } from '../utils/sessionCache';
+
+const CACHE_TTL_MS = 15 * 60 * 1000;
 
 const LANGUAGE_COLORS: Record<string, string> = {
   TypeScript: '#3178c6',
@@ -54,8 +57,17 @@ export function useGithubStats(username: string) {
 
   useEffect(() => {
     let cancelled = false;
+    const cacheKey = `github-stats:${username}`;
 
     async function load() {
+      const fresh = readSessionCache<GithubStats>(cacheKey, CACHE_TTL_MS);
+      if (fresh) {
+        setData(fresh);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
@@ -105,21 +117,27 @@ export function useGithubStats(username: string) {
         const contributionCalendar = contrib.contributions;
         const totalContributionsYear = contrib.total.lastYear ?? 0;
 
-        if (!cancelled) {
-          setData({
-            username,
-            totalContributionsYear,
-            currentStreakDays: computeCurrentStreak(contributionCalendar),
-            publicRepos: user.public_repos,
-            totalStars,
-            topLanguages,
-            contributionCalendar,
-            featuredRepos
-          });
-        }
+        const result: GithubStats = {
+          username,
+          totalContributionsYear,
+          currentStreakDays: computeCurrentStreak(contributionCalendar),
+          publicRepos: user.public_repos,
+          totalStars,
+          topLanguages,
+          contributionCalendar,
+          featuredRepos
+        };
+
+        writeSessionCache(cacheKey, result);
+        if (!cancelled) setData(result);
       } catch (err) {
+        const stale = readSessionCache<GithubStats>(cacheKey);
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Failed to load GitHub data');
+          if (stale) {
+            setData(stale);
+          } else {
+            setError(err instanceof Error ? err.message : 'Failed to load GitHub data');
+          }
         }
       } finally {
         if (!cancelled) setLoading(false);
