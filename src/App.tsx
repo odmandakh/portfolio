@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MessageSquare, Send } from 'lucide-react';
+import React, { useState, Suspense, lazy } from 'react';
+import { MessageSquare, Send, Loader2 } from 'lucide-react';
 import { TopBar } from './components/Desktop/TopBar';
 import { DesktopIcon } from './components/Desktop/DesktopIcon';
 import { ExperienceWidget } from './components/Widgets/ExperienceWidget';
@@ -7,15 +7,15 @@ import { GithubWidget } from './components/Widgets/GithubWidget';
 import { LeetcodeWidget } from './components/Widgets/LeetcodeWidget';
 import { Window } from './components/Common/Window';
 
-import { AboutView } from './components/Views/AboutView';
-import { ProjectsView } from './components/Views/ProjectsView';
-import { SkillsView } from './components/Views/SkillsView';
-import { CertificatesView } from './components/Views/CertificatesView';
-import { CVView } from './components/Views/CVView';
-import { ExperienceView } from './components/Views/ExperienceView';
-import { GithubView } from './components/Views/GithubView';
-import { LeetcodeView } from './components/Views/LeetcodeView';
-import { ContactView } from './components/Views/ContactView';
+const AboutView = lazy(() => import('./components/Views/AboutView').then((m) => ({ default: m.AboutView })));
+const ProjectsView = lazy(() => import('./components/Views/ProjectsView').then((m) => ({ default: m.ProjectsView })));
+const SkillsView = lazy(() => import('./components/Views/SkillsView').then((m) => ({ default: m.SkillsView })));
+const CertificatesView = lazy(() => import('./components/Views/CertificatesView').then((m) => ({ default: m.CertificatesView })));
+const CVView = lazy(() => import('./components/Views/CVView').then((m) => ({ default: m.CVView })));
+const ExperienceView = lazy(() => import('./components/Views/ExperienceView').then((m) => ({ default: m.ExperienceView })));
+const GithubView = lazy(() => import('./components/Views/GithubView').then((m) => ({ default: m.GithubView })));
+const LeetcodeView = lazy(() => import('./components/Views/LeetcodeView').then((m) => ({ default: m.LeetcodeView })));
+const ContactView = lazy(() => import('./components/Views/ContactView').then((m) => ({ default: m.ContactView })));
 
 import { desktopItems } from './data/desktopItems';
 import { DesktopWindowId } from './types/portfolio';
@@ -203,7 +203,16 @@ export default function App() {
         onClose={handleCloseWindow}
         onFocus={() => {}}
       >
-        {renderActiveView()}
+        <Suspense
+          fallback={
+            <div className="flex-1 flex items-center justify-center min-h-[400px] text-[#586e75] gap-2 text-sm font-mono">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Loading...</span>
+            </div>
+          }
+        >
+          {renderActiveView()}
+        </Suspense>
       </Window>
 
 
