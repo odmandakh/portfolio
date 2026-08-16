@@ -204,5 +204,26 @@ export const projectsData: Project[] = [
     date: 'Planned',
     metrics: 'Planned Scraping & Arbitrage Bot',
     folderColor: 'bg-orange-500/20 text-orange-400 border-orange-500/30'
+  },
+  {
+    id: 'leetcode',
+    title: 'leetcode',
+    category: 'Personal Project',
+    tag: 'Algorithms & Data Structures',
+    shortDescription: 'Personal repository of LeetCode problem solutions.',
+    fullDescription: 'A personal collection of LeetCode problem solutions, solved independently as ongoing algorithm and data structure practice, organized by problem with a shared local build setup.',
+    technologies: ['C++', 'Shell', 'CMake'],
+    problem: 'Wanted a structured, version-controlled way to practice algorithms and data structures consistently rather than losing solutions across the LeetCode editor.',
+    solution: 'Maintain a personal repository of solved LeetCode problems, written in C++ and organized per problem, with shared Shell/CMake tooling for building and running solutions locally.',
+    architecture: 'Individual solution files organized by problem, with a shared CMake build configuration and Shell scripts for compiling and running solutions locally.',
+    keyLearnings: [
+      'Consistent daily practice strengthens pattern recognition across algorithm categories.',
+      'Writing solutions in C++ reinforces low-level performance and memory tradeoffs.'
+    ],
+    githubUrl: 'https://github.com/Odmandakh/leetcode',
+    featured: false,
+    date: 'Ongoing',
+    metrics: '117+ LeetCode Problems Solved',
+    folderColor: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
   }
 ];
