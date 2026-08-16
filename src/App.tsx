@@ -107,7 +107,7 @@ export default function App() {
       {/* Primary Desktop Canvas Surface */}
       <main className="relative z-10 flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-6 items-start justify-between">
         {/* Desktop Objects Grid */}
-        <div className="flex-1 w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 items-start">
+        <div className="flex-1 w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 items-start justify-items-center">
           {/* Folders, Files, & Apps */}
           {desktopItems.filter(i => i.type !== 'widget').map((item) => (
             <DesktopIcon
