@@ -130,10 +130,28 @@ export interface LeetcodeStats {
   acceptanceRate: string;
   ranking: string;
   streakDays: number;
+  attempting: number;
+  totalSubmissions: number;
+  activeDays: number;
+  longestStreak: number;
+  submissionCalendarDays: GithubDay[];
   recentSubmissions: {
     title: string;
     timeAgo: string;
     lang: string;
+  }[];
+  contestsAttended: number;
+  contestRating: number;
+  contestGlobalRanking: number;
+  contestTopPercentage: number;
+  contestHistory: {
+    title: string;
+    date: string;
+    rating: number;
+    ranking: number;
+    problemsSolved: number;
+    totalProblems: number;
+    trendDirection: 'UP' | 'DOWN';
   }[];
 }
 

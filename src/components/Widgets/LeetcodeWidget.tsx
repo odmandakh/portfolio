@@ -145,7 +145,10 @@ export const LeetcodeWidget: React.FC<LeetcodeWidgetProps> = ({ onClick }) => {
           {/* Official Footer */}
           <div className="z-10 pt-2 border-t border-[#3e3e3e] w-full flex items-center justify-between text-[10px] text-[#8a8a8a] font-mono">
             <div className="flex items-center space-x-2">
-              <span className="flex items-center text-[#ffb800] font-bold">
+              <span
+                className="flex items-center text-[#ffb800] font-bold"
+                title="Consecutive days with any LeetCode submission — not LeetCode's Daily Challenge streak"
+              >
                 <Flame className="w-3 h-3 mr-0.5 fill-[#ffb800]" />
                 {leetcodeData.streakDays}d
               </span>

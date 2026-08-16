@@ -3,6 +3,7 @@ import { GithubStats, GithubDay } from '../types/portfolio';
 import { readSessionCache, writeSessionCache } from '../utils/sessionCache';
 
 const CACHE_TTL_MS = 15 * 60 * 1000;
+const STALE_FALLBACK_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 const LANGUAGE_COLORS: Record<string, string> = {
   TypeScript: '#3178c6',
@@ -131,7 +132,7 @@ export function useGithubStats(username: string) {
         writeSessionCache(cacheKey, result);
         if (!cancelled) setData(result);
       } catch (err) {
-        const stale = readSessionCache<GithubStats>(cacheKey);
+        const stale = readSessionCache<GithubStats>(cacheKey, STALE_FALLBACK_MAX_AGE_MS);
         if (!cancelled) {
           if (stale) {
             setData(stale);
