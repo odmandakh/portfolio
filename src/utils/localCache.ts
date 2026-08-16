@@ -3,9 +3,9 @@ interface CacheEntry<T> {
   fetchedAt: number;
 }
 
-export function readSessionCache<T>(key: string, maxAgeMs?: number): T | null {
+export function readLocalCache<T>(key: string, maxAgeMs?: number): T | null {
   try {
-    const raw = sessionStorage.getItem(key);
+    const raw = localStorage.getItem(key);
     if (!raw) return null;
     const entry: CacheEntry<T> = JSON.parse(raw);
     if (maxAgeMs !== undefined && Date.now() - entry.fetchedAt > maxAgeMs) return null;
@@ -15,11 +15,11 @@ export function readSessionCache<T>(key: string, maxAgeMs?: number): T | null {
   }
 }
 
-export function writeSessionCache<T>(key: string, data: T): void {
+export function writeLocalCache<T>(key: string, data: T): void {
   try {
     const entry: CacheEntry<T> = { data, fetchedAt: Date.now() };
-    sessionStorage.setItem(key, JSON.stringify(entry));
+    localStorage.setItem(key, JSON.stringify(entry));
   } catch {
-    // sessionStorage unavailable or quota exceeded — caching is a non-critical optimization
+    // localStorage unavailable or quota exceeded — caching is a non-critical optimization
   }
 }

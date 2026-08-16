@@ -33,7 +33,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }));
       setDate(now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }));
     };
     updateTime();

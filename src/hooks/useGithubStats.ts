@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { GithubStats, GithubDay } from '../types/portfolio';
-import { readSessionCache, writeSessionCache } from '../utils/sessionCache';
+import { readLocalCache, writeLocalCache } from '../utils/localCache';
 
-const CACHE_TTL_MS = 15 * 60 * 1000;
+const CACHE_TTL_MS = 60 * 60 * 1000;
 const STALE_FALLBACK_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 const LANGUAGE_COLORS: Record<string, string> = {
@@ -61,7 +61,7 @@ export function useGithubStats(username: string) {
     const cacheKey = `github-stats:${username}`;
 
     async function load() {
-      const fresh = readSessionCache<GithubStats>(cacheKey, CACHE_TTL_MS);
+      const fresh = readLocalCache<GithubStats>(cacheKey, CACHE_TTL_MS);
       if (fresh) {
         setData(fresh);
         setError(null);
@@ -129,10 +129,10 @@ export function useGithubStats(username: string) {
           featuredRepos
         };
 
-        writeSessionCache(cacheKey, result);
+        writeLocalCache(cacheKey, result);
         if (!cancelled) setData(result);
       } catch (err) {
-        const stale = readSessionCache<GithubStats>(cacheKey, STALE_FALLBACK_MAX_AGE_MS);
+        const stale = readLocalCache<GithubStats>(cacheKey, STALE_FALLBACK_MAX_AGE_MS);
         if (!cancelled) {
           if (stale) {
             setData(stale);

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { LeetcodeStats, GithubDay } from '../types/portfolio';
-import { readSessionCache, writeSessionCache } from '../utils/sessionCache';
+import { readLocalCache, writeLocalCache } from '../utils/localCache';
 
-const CACHE_TTL_MS = 15 * 60 * 1000;
+const CACHE_TTL_MS = 60 * 60 * 1000;
 const STALE_FALLBACK_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 const DAY_SECONDS = 86400;
 
@@ -130,7 +130,7 @@ export function useLeetcodeStats(username: string) {
     const cacheKey = `leetcode-stats:${username}`;
 
     async function load() {
-      const fresh = readSessionCache<LeetcodeStats>(cacheKey, CACHE_TTL_MS);
+      const fresh = readLocalCache<LeetcodeStats>(cacheKey, CACHE_TTL_MS);
       if (fresh) {
         setData(fresh);
         setError(null);
@@ -204,10 +204,10 @@ export function useLeetcodeStats(username: string) {
             .reverse()
         };
 
-        writeSessionCache(cacheKey, result);
+        writeLocalCache(cacheKey, result);
         if (!cancelled) setData(result);
       } catch (err) {
-        const stale = readSessionCache<LeetcodeStats>(cacheKey, STALE_FALLBACK_MAX_AGE_MS);
+        const stale = readLocalCache<LeetcodeStats>(cacheKey, STALE_FALLBACK_MAX_AGE_MS);
         if (!cancelled) {
           if (stale) {
             setData(stale);
