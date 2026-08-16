@@ -111,9 +111,9 @@ export const Window: React.FC<WindowProps> = ({
           width: isMaximized ? '100%' : size.width ? `${size.width}px` : undefined,
           height: isMaximized ? '100%' : size.height ? `${size.height}px` : undefined,
         }}
-        className={`pointer-events-auto relative flex flex-col bg-[#073642]/90 backdrop-blur-2xl border border-[#2aa198]/30 rounded-2xl shadow-2xl text-[#839496] overflow-hidden ${
-          isMaximized 
-            ? 'fixed inset-3 z-40 max-w-none max-h-none' 
+        className={`pointer-events-auto relative flex flex-col min-w-0 bg-[#073642]/90 backdrop-blur-2xl border border-[#2aa198]/30 rounded-2xl shadow-2xl text-[#839496] overflow-hidden ${
+          isMaximized
+            ? 'fixed inset-3 z-40 max-w-none max-h-none'
             : `${size.width ? '' : defaultWidth} w-full ${size.height ? '' : defaultHeight}`
         } ${
           isFocused ? 'ring-1 ring-[#2aa198]/40 border-[#2aa198]/40 shadow-[#001f27]' : 'opacity-95'
@@ -188,7 +188,7 @@ export const Window: React.FC<WindowProps> = ({
         </div>
 
         {/* Window Body Container */}
-        <div className="flex-1 min-h-0 flex flex-col overflow-y-auto custom-scrollbar bg-[#002b36] backdrop-blur-xl relative">
+        <div className="flex-1 min-h-0 min-w-0 overflow-y-auto custom-scrollbar bg-[#002b36] backdrop-blur-xl relative">
           {children}
         </div>
 
