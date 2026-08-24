@@ -7,7 +7,7 @@ export const desktopItems: DesktopItem[] = [
     title: 'Projects',
     type: 'folder',
     icon: 'FolderGit2',
-    badge: '11',
+    badge: '12',
     description: 'Projects'
   },
   {

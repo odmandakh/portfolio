@@ -30,6 +30,21 @@ interface ProjectsViewProps {
   onNavigate?: (id: DesktopWindowId) => void;
 }
 
+const STATUS_CONFIG: Record<Project['status'], {
+  label: string;
+  dot: string;
+  badge: string;
+  icon: React.ComponentType<{ className?: string }>;
+  iconRing: string;
+}> = {
+  done: { label: 'Done', dot: 'bg-[#859900]', badge: 'bg-[#859900]/10 text-[#859900] border-[#859900]/30', icon: CheckCircle2, iconRing: 'text-[#859900] border-[#859900]/40' },
+  ongoing: { label: 'Ongoing', dot: 'bg-[#b58900]', badge: 'bg-[#b58900]/10 text-[#b58900] border-[#b58900]/30', icon: Activity, iconRing: 'text-[#b58900] border-[#b58900]/40' },
+  planned: { label: 'Planned', dot: 'bg-[#586e75]', badge: 'bg-[#586e75]/10 text-[#93a1a1] border-[#586e75]/30', icon: Calendar, iconRing: 'text-[#93a1a1] border-[#586e75]/40' },
+  disbanded: { label: 'Cancelled', dot: 'bg-[#dc322f]', badge: 'bg-[#dc322f]/10 text-[#dc322f] border-[#dc322f]/30', icon: X, iconRing: 'text-[#dc322f] border-[#dc322f]/40' }
+};
+
+const STATUS_ORDER: Project['status'][] = ['done', 'ongoing', 'planned', 'disbanded'];
+
 export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -48,7 +63,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
       project.technologies.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())) ||
       project.shortDescription.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesTag && matchesSearch;
-  });
+  }).sort((a, b) => STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status));
 
   return (
     <div className="flex flex-col h-full min-h-[520px] bg-[#002b36] text-[#93a1a1] overflow-hidden select-none font-sans">
@@ -255,7 +270,11 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
                     <Folder className="w-8 h-8 fill-[#268bd2]/20" />
                   </div>
                   <div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center flex-wrap gap-2">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border font-mono flex items-center gap-1.5 ${STATUS_CONFIG[selectedProject.status].badge}`}>
+                        <span className={`w-2 h-2 rounded-full ${STATUS_CONFIG[selectedProject.status].dot}`} />
+                        {STATUS_CONFIG[selectedProject.status].label}
+                      </span>
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#002b36] text-[#2aa198] border border-[#2aa198]/30 font-mono">
                         {selectedProject.category}
                       </span>
@@ -335,6 +354,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
                     <div className="w-20 h-20 rounded-2xl bg-[#073642] border border-[#2aa198]/30 flex items-center justify-center text-[#268bd2] group-hover:scale-105 group-hover:border-[#2aa198]/60 transition-transform shadow-md">
                       <Folder className="w-11 h-11 fill-[#268bd2]/20 text-[#268bd2]" />
                     </div>
+                    <span
+                      className={`absolute -top-1 -right-1 p-0.5 rounded-full bg-[#002b36] border shadow ${STATUS_CONFIG[project.status].iconRing}`}
+                      title={STATUS_CONFIG[project.status].label}
+                    >
+                      {React.createElement(STATUS_CONFIG[project.status].icon, { className: 'w-3.5 h-3.5' })}
+                    </span>
                   </div>
 
                   <div>
@@ -367,7 +392,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
                     className="grid grid-cols-12 px-4 py-3 items-center hover:bg-[#002b36]/60 transition-colors cursor-pointer text-[#eee8d5]"
                   >
                     <div className="col-span-4 flex items-center space-x-2 font-semibold min-w-0 pr-2">
-                      <Folder className="w-4 h-4 text-[#268bd2] shrink-0 fill-[#268bd2]/20" />
+                      <span className="relative shrink-0">
+                        <Folder className="w-4 h-4 text-[#268bd2] fill-[#268bd2]/20" />
+                        <span
+                          className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full ${STATUS_CONFIG[project.status].dot}`}
+                          title={STATUS_CONFIG[project.status].label}
+                        />
+                      </span>
                       <span className="truncate">{project.title}</span>
                     </div>
                     <div className="col-span-3 pr-2">

@@ -21,6 +21,7 @@ export interface Project {
   title: string;
   category: string;
   tag: string;
+  status: 'done' | 'ongoing' | 'planned' | 'disbanded';
   shortDescription: string;
   fullDescription: string;
   technologies: string[];
