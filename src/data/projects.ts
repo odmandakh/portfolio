@@ -258,5 +258,27 @@ export const projectsData: Project[] = [
     date: 'Ongoing',
     metrics: 'Club Event & Leaderboard Platform',
     folderColor: 'bg-pink-500/20 text-pink-400 border-pink-500/30'
+  },
+  {
+    id: 'dotfiles',
+    title: 'dotfiles',
+    category: 'Personal Project',
+    tag: 'Developer Tooling',
+    status: 'done',
+    shortDescription: 'Personal ZSH shell configuration.',
+    fullDescription: 'A personal dotfiles repository for ZSH configuration, covering aliases, prompt customization, and environment setup for a consistent terminal experience across machines.',
+    technologies: ['Shell', 'Zsh'],
+    problem: 'Wanted a consistent, version-controlled terminal environment instead of manually reconfiguring shell settings on every new machine.',
+    solution: 'Maintain a personal dotfiles repository for ZSH configuration, keeping shell setup portable and easy to restore.',
+    architecture: 'Shell scripts and ZSH configuration files, version-controlled and portable across machines.',
+    keyLearnings: [
+      'Structuring shell configuration for easy syncing across multiple machines.',
+      'Keeping a personal dev environment reproducible and version-controlled.'
+    ],
+    githubUrl: 'https://github.com/odmandakh/dotfiles',
+    featured: false,
+    date: 'Ongoing',
+    metrics: 'Personal ZSH Configuration',
+    folderColor: 'bg-sky-500/20 text-sky-400 border-sky-500/30'
   }
 ];

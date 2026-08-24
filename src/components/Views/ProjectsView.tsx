@@ -53,7 +53,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const categories = ['All', 'Personal Project', 'Open Source', 'Professional'];
-  const tags = ['All', 'Web Development', 'Backend Service', 'Data Science & ML', 'Automation & Scraping'];
+  const tags = ['All', ...Array.from(new Set(projectsData.map((p) => p.tag)))];
 
   const filteredProjects = projectsData.filter((project) => {
     const matchesCategory = selectedCategory === 'All' || project.category === selectedCategory;
