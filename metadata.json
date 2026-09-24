@@ -1,6 +1,0 @@
-{
-  "name": "Odmandakh OS",
-  "description": "Personal portfolio website presented as a simple macOS-inspired desktop environment.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
