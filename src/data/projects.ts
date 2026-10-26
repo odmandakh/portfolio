@@ -242,7 +242,7 @@ export const projectsData: Project[] = [
     title: 'pause-please',
     category: 'Personal Project',
     tag: 'Web Development',
-    status: 'ongoing',
+    status: 'done',
     shortDescription: 'Event booking, leaderboards, and level tracking for a tabletop game club.',
     fullDescription: 'A web app for the Pause Please Club, supporting event booking, player leaderboards, and level tracking for Blood on the Clocktower and weekend game nights.',
     technologies: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Motion'],
@@ -253,9 +253,10 @@ export const projectsData: Project[] = [
       'Designing a leaderboard and level-tracking model that stays fair across irregular attendance.',
       'Building an event booking flow simple enough for a casual weekly club to actually use.'
     ],
+    demoUrl: 'https://pauseplease.club',
     githubUrl: 'https://github.com/odmandakh/pause-please',
     featured: false,
-    date: 'Ongoing',
+    date: 'Phase 1 Released',
     metrics: 'Club Event & Leaderboard Platform',
     folderColor: 'bg-pink-500/20 text-pink-400 border-pink-500/30'
   },
