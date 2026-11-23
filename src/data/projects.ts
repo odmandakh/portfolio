@@ -283,5 +283,105 @@ export const projectsData: Project[] = [
     date: 'Maintained',
     metrics: 'Personal ZSH Configuration',
     folderColor: 'bg-sky-500/20 text-sky-400 border-sky-500/30'
+  },
+  {
+    id: 'credit-scorecard-builder',
+    title: 'credit-scorecard-builder',
+    folder: 'professional',
+    tag: 'Data Science & ML',
+    status: 'done',
+    shortDescription: 'No-code tool for building rule-based credit scorecards, from the AND Solutions ML team.',
+    fullDescription: 'Credit Scorecard Builder from AND Solutions lets lenders and other businesses design rule-based scorecards without developers. It connects through APIs or bulk data uploads and supports team roles, A/B testing and version control. I worked on it as part of the AND ML team.',
+    technologies: ['Python', 'AWS', 'Machine Learning', 'Credit Scoring'],
+    problem: 'Lenders wanted to design and adjust their own scoring rules instead of waiting on developers for every change.',
+    solution: 'Worked in the ML team behind the product on the scoring services that run scorecards, both serverless in the cloud and on-premise for clients with strict data rules.',
+    architecture: 'Scoring served through AWS Lambda and API Gateway, with an on-premise deployment option for clients that keep data in their own infrastructure.',
+    keyLearnings: [
+      'Serving ML scoring with low latency while keeping costs tied to actual usage.',
+      'Meeting strict data governance requirements when running inside a client’s own infrastructure.'
+    ],
+    demoUrl: 'https://andsolutions.net/credit-scorecard-builder',
+    featured: false,
+    date: 'Sep 2024 — Apr 2026'
+  },
+  {
+    id: 'niko-scoring',
+    title: 'niko-scoring',
+    folder: 'professional',
+    tag: 'Data Science & ML',
+    status: 'done',
+    shortDescription: 'AutoML platform for building, evaluating and deploying scoring models without code.',
+    fullDescription: 'Niko is a web-based AutoML platform that lets non-technical users build and evaluate machine learning models. As a senior backend developer at AND Systems, I built its backend for model training, scorecard configuration and model deployment.',
+    technologies: ['Quarkus', 'Python', 'AWS', 'Machine Learning'],
+    problem: 'Credit teams needed scoring models but depended on data scientists to build and ship every one.',
+    solution: 'Built the backend that runs model training, stores scorecard configurations and deploys models, so users can do all of it from the web app.',
+    architecture: 'Web app backed by services for model training, scorecard configuration and deployment.',
+    keyLearnings: [
+      'Turning an ML workflow into product features that non-technical users can trust.',
+      'Designing APIs around long-running jobs such as model training.'
+    ],
+    demoUrl: 'https://app.nikoscoring.ai',
+    featured: false,
+    date: 'Oct 2022 — Aug 2024'
+  },
+  {
+    id: 'beeco-program',
+    title: 'beeco-program',
+    folder: 'professional',
+    tag: 'Backend Service',
+    status: 'done',
+    shortDescription: 'Data integration platform for Japan’s dairy and livestock industry.',
+    fullDescription: 'BeecoProgram is a data integration platform for Japan’s dairy and livestock industry. I worked on it as a senior backend developer at AND Systems.',
+    technologies: ['Quarkus', 'Microservices', 'AWS'],
+    problem: 'Data from different sources across the dairy and livestock industry needed to come together in one platform.',
+    solution: 'Built backend services that bring this data into one consistent model for the platform to use.',
+    architecture: 'Microservices backend on AWS behind the web platform.',
+    keyLearnings: [
+      'Modelling data from many sources into one consistent shape.',
+      'Building for an industry and market with its own domain rules and expectations.'
+    ],
+    demoUrl: 'https://beeco.eco/services/beecoprogram',
+    featured: false,
+    date: 'Oct 2022 — Aug 2024'
+  },
+  {
+    id: 'lendmn',
+    title: 'lendmn',
+    folder: 'professional',
+    tag: 'Backend Service',
+    status: 'done',
+    shortDescription: 'Consumer lending and investment platform: core lending service, user points and levels, and the admin panel.',
+    fullDescription: 'LendMN is a consumer lending and investment platform from LendMN NBFI, with loan products, a loan calculator, mobile apps and an investor section. As part of the core lending team at AND Systems, I worked on the lending service, the user points and user levels system, and the admin panel.',
+    technologies: ['PHP', 'Symfony', 'React', 'Microservices'],
+    problem: 'A growing lending business needed its core loan logic to stay reliable while new features shipped, and its staff needed one place to run daily operations.',
+    solution: 'Maintained business logic in the core lending service, built the user points and user levels system, and developed the Symfony admin panel with analytics, reporting and user management.',
+    architecture: 'Core lending service within a platform moving from a monolith to microservices, with a Symfony admin panel for staff.',
+    keyLearnings: [
+      'Changing critical lending logic safely in a system that handles real money.',
+      'Moving from a monolith to microservices without pausing the business.'
+    ],
+    demoUrl: 'https://lend.mn',
+    featured: false,
+    date: 'Nov 2019 — Sep 2022'
+  },
+  {
+    id: 'liver-center',
+    title: 'liver-center',
+    folder: 'professional',
+    tag: 'Web Development',
+    status: 'done',
+    shortDescription: 'Web application for the Liver Center, built at Mono Solution.',
+    fullDescription: 'A web application for the Liver Center, built with the Mono Solution team. I worked across the full stack with React and Node.js.',
+    technologies: ['React', 'Node.js'],
+    problem: 'The Liver Center needed its own web application.',
+    solution: 'Worked across the full stack, building React components and integrating them with Node.js APIs.',
+    architecture: 'React frontend with a Node.js backend.',
+    keyLearnings: [
+      'Building software for healthcare, where correctness and privacy come first.',
+      'Component-based design and API integration across a full stack.'
+    ],
+    demoUrl: 'https://app.livercenter.mn',
+    featured: false,
+    date: 'Jan 2019 — Nov 2019'
   }
 ];
