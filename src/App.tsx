@@ -20,6 +20,19 @@ const ContactView = lazy(() => import('./components/Views/ContactView').then((m)
 import { desktopItems } from './data/desktopItems';
 import { DesktopWindowId } from './types/portfolio';
 
+// Default window size per app, in px; windows shrink to fit smaller screens
+const WINDOW_SIZES: Record<DesktopWindowId, { width: number; height: number }> = {
+  projects: { width: 1000, height: 640 },
+  certificates: { width: 1000, height: 640 },
+  about: { width: 920, height: 640 },
+  skills: { width: 1120, height: 720 },
+  cv: { width: 860, height: 900 },
+  experience: { width: 760, height: 720 },
+  github: { width: 900, height: 760 },
+  leetcode: { width: 900, height: 760 },
+  contact: { width: 820, height: 580 }
+};
+
 export default function App() {
   const [activeWindow, setActiveWindow] = useState<DesktopWindowId | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
@@ -208,6 +221,8 @@ export default function App() {
         isFocused={true}
         onClose={handleCloseWindow}
         onFocus={() => {}}
+        defaultWidth={activeWindow ? WINDOW_SIZES[activeWindow].width : undefined}
+        defaultHeight={activeWindow ? WINDOW_SIZES[activeWindow].height : undefined}
       >
         <Suspense
           fallback={

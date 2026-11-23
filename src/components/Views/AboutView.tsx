@@ -90,7 +90,7 @@ export const AboutView: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full min-h-[520px] bg-[#002b36] text-[#93a1a1] overflow-hidden select-none font-sans">
+    <div className="flex flex-col h-full bg-[#002b36] text-[#93a1a1] overflow-hidden select-none font-sans">
       {/* Main Layout */}
       <div className="flex-1 flex overflow-hidden">
         {/* Finder Sidebar */}

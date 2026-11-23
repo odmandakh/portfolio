@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, useDragControls } from 'motion/react';
 import { X, Minus, Maximize2, Minimize2, GripHorizontal } from 'lucide-react';
 
@@ -12,9 +12,27 @@ interface WindowProps {
   onFocus: () => void;
   children: React.ReactNode;
   subtitle?: string;
-  defaultWidth?: string;
-  defaultHeight?: string;
+  // Preferred size in px; it shrinks to fit smaller screens
+  defaultWidth?: number;
+  defaultHeight?: number;
 }
+
+type ResizeHandle = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
+
+const MIN_WIDTH = 340;
+const MIN_HEIGHT = 260;
+
+// Invisible hit areas along each edge and corner, like a native window: only the cursor changes
+const RESIZE_HANDLES: { handle: ResizeHandle; className: string }[] = [
+  { handle: 'n', className: 'top-0 left-3 right-3 h-1.5 cursor-ns-resize' },
+  { handle: 's', className: 'bottom-0 left-3 right-3 h-1.5 cursor-ns-resize' },
+  { handle: 'e', className: 'right-0 top-3 bottom-3 w-1.5 cursor-ew-resize' },
+  { handle: 'w', className: 'left-0 top-3 bottom-3 w-1.5 cursor-ew-resize' },
+  { handle: 'ne', className: 'top-0 right-0 w-3 h-3 cursor-nesw-resize' },
+  { handle: 'sw', className: 'bottom-0 left-0 w-3 h-3 cursor-nesw-resize' },
+  { handle: 'nw', className: 'top-0 left-0 w-3 h-3 cursor-nwse-resize' },
+  { handle: 'se', className: 'bottom-0 right-0 w-3 h-3 cursor-nwse-resize' }
+];
 
 export const Window: React.FC<WindowProps> = ({
   title,
@@ -25,8 +43,9 @@ export const Window: React.FC<WindowProps> = ({
   onFocus,
   children,
   subtitle,
-  defaultWidth = 'max-w-4xl',
-  defaultHeight = 'max-h-[85vh]'
+  id,
+  defaultWidth = 960,
+  defaultHeight = 640
 }) => {
   const [isMaximized, setIsMaximized] = useState(false);
   const [size, setSize] = useState<{ width: number | null; height: number | null }>({
@@ -36,6 +55,12 @@ export const Window: React.FC<WindowProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const dragControls = useDragControls();
+
+  // Each window opens at its own default size, not wherever the previous one was resized to
+  useEffect(() => {
+    setSize({ width: null, height: null });
+    setIsMaximized(false);
+  }, [id]);
 
   if (!isOpen) return null;
 
@@ -49,39 +74,39 @@ export const Window: React.FC<WindowProps> = ({
     setIsMaximized(!isMaximized);
   };
 
-  const handleResizeStart = (e: React.PointerEvent, handle: 'e' | 's' | 'w' | 'se' | 'sw') => {
+  const handleResizeStart = (e: React.PointerEvent, handle: ResizeHandle) => {
     e.stopPropagation();
     e.preventDefault();
     if (isMaximized) return;
 
+    const container = containerRef.current;
+    const area = container?.parentElement;
+    if (!container || !area) return;
+
     const startX = e.clientX;
     const startY = e.clientY;
-
-    const container = containerRef.current;
-    if (!container) return;
     const rect = container.getBoundingClientRect();
-    const startWidth = rect.width;
-    const startHeight = rect.height;
+    const areaStyle = getComputedStyle(area);
+    const maxWidth = area.clientWidth - parseFloat(areaStyle.paddingLeft) - parseFloat(areaStyle.paddingRight);
+    const maxHeight = area.clientHeight - parseFloat(areaStyle.paddingTop) - parseFloat(areaStyle.paddingBottom);
 
     const onPointerMove = (moveEvent: PointerEvent) => {
       moveEvent.preventDefault();
-      const deltaX = moveEvent.clientX - startX;
-      const deltaY = moveEvent.clientY - startY;
+      // The window stays centred, so it grows on both sides: double the delta to keep the dragged edge under the cursor
+      const deltaX = (moveEvent.clientX - startX) * 2;
+      const deltaY = (moveEvent.clientY - startY) * 2;
 
-      let newWidth = startWidth;
-      let newHeight = startHeight;
+      let width = rect.width;
+      let height = rect.height;
+      if (handle.includes('e')) width += deltaX;
+      if (handle.includes('w')) width -= deltaX;
+      if (handle.includes('s')) height += deltaY;
+      if (handle.includes('n')) height -= deltaY;
 
-      if (handle.includes('e')) {
-        newWidth = Math.max(340, Math.min(window.innerWidth - 32, startWidth + deltaX));
-      } else if (handle.includes('w')) {
-        newWidth = Math.max(340, Math.min(window.innerWidth - 32, startWidth - deltaX));
-      }
-
-      if (handle.includes('s')) {
-        newHeight = Math.max(260, Math.min(window.innerHeight - 32, startHeight + deltaY));
-      }
-
-      setSize({ width: newWidth, height: newHeight });
+      setSize({
+        width: Math.max(MIN_WIDTH, Math.min(maxWidth, width)),
+        height: Math.max(MIN_HEIGHT, Math.min(maxHeight, height))
+      });
     };
 
     const onPointerUp = () => {
@@ -94,7 +119,7 @@ export const Window: React.FC<WindowProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-30 flex items-center justify-center p-2 sm:p-6">
+    <div className="fixed inset-0 pointer-events-none z-30 flex items-center justify-center px-2 pt-10 pb-20 sm:px-6 sm:pt-12 sm:pb-24">
       <motion.div
         ref={containerRef}
         drag={!isMaximized}
@@ -108,13 +133,13 @@ export const Window: React.FC<WindowProps> = ({
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         onClick={onFocus}
         style={{
-          width: isMaximized ? '100%' : size.width ? `${size.width}px` : undefined,
-          height: isMaximized ? '100%' : size.height ? `${size.height}px` : undefined,
+          width: isMaximized ? '100%' : `min(${size.width ?? defaultWidth}px, 100%)`,
+          height: isMaximized ? '100%' : `min(${size.height ?? defaultHeight}px, 100%)`
         }}
         className={`pointer-events-auto relative flex flex-col min-w-0 bg-[#073642] sm:bg-[#073642]/90 sm:backdrop-blur-2xl border border-[#2aa198]/30 rounded-2xl shadow-2xl text-[#839496] overflow-hidden ${
           isMaximized
             ? 'fixed inset-3 z-40 max-w-none max-h-none'
-            : `${size.width ? '' : defaultWidth} w-full ${size.height ? '' : defaultHeight}`
+            : ''
         } ${
           isFocused ? 'ring-1 ring-[#2aa198]/40 border-[#2aa198]/40 shadow-[#001f27]' : 'opacity-95'
         }`}
@@ -192,45 +217,16 @@ export const Window: React.FC<WindowProps> = ({
           {children}
         </div>
 
-        {/* Resizable Handles (Edge & Corner Dragging) */}
-        {!isMaximized && (
-          <>
-            {/* Right Border Handle */}
+        {/* Resize edges and corners (not on phones, where windows fill the screen) */}
+        {!isMaximized &&
+          RESIZE_HANDLES.map(({ handle, className }) => (
             <div
-              onPointerDown={(e) => handleResizeStart(e, 'e')}
-              className="absolute top-0 right-0 w-2.5 h-full cursor-e-resize z-30 hover:bg-[#2aa198]/20 transition-colors"
-              title="Drag to resize width"
+              key={handle}
+              onPointerDown={(e) => handleResizeStart(e, handle)}
+              className={`absolute z-40 hidden sm:block ${className}`}
+              aria-hidden="true"
             />
-            {/* Bottom Border Handle */}
-            <div
-              onPointerDown={(e) => handleResizeStart(e, 's')}
-              className="absolute bottom-0 left-0 h-2.5 w-full cursor-s-resize z-30 hover:bg-[#2aa198]/20 transition-colors"
-              title="Drag to resize height"
-            />
-            {/* Left Border Handle */}
-            <div
-              onPointerDown={(e) => handleResizeStart(e, 'w')}
-              className="absolute top-0 left-0 w-2.5 h-full cursor-w-resize z-30 hover:bg-[#2aa198]/20 transition-colors"
-              title="Drag to resize width"
-            />
-            {/* Bottom-Right Corner Handle with visual resize grip */}
-            <div
-              onPointerDown={(e) => handleResizeStart(e, 'se')}
-              className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize z-40 flex items-center justify-center group"
-              title="Drag to resize window"
-            >
-              <div className="w-3 h-3 border-r-2 border-b-2 border-[#2aa198]/60 group-hover:border-[#2aa198] transition-colors rounded-br-sm" />
-            </div>
-            {/* Bottom-Left Corner Handle */}
-            <div
-              onPointerDown={(e) => handleResizeStart(e, 'sw')}
-              className="absolute bottom-0 left-0 w-6 h-6 cursor-sw-resize z-40 flex items-center justify-center group"
-              title="Drag to resize window"
-            >
-              <div className="w-3 h-3 border-l-2 border-b-2 border-[#2aa198]/60 group-hover:border-[#2aa198] transition-colors rounded-bl-sm" />
-            </div>
-          </>
-        )}
+          ))}
       </motion.div>
     </div>
   );

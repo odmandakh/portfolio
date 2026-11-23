@@ -88,7 +88,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
 
 
   return (
-    <div className="flex flex-col h-full min-h-[520px] bg-[#002b36] text-[#93a1a1] overflow-hidden select-none font-sans">
+    <div className="flex flex-col h-full bg-[#002b36] text-[#93a1a1] overflow-hidden select-none font-sans">
       {/* macOS Finder Top Toolbar */}
       <div className="bg-[#073642] border-b border-[#2aa198]/20 px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
         {/* Navigation & Breadcrumbs */}
