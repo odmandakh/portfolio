@@ -120,6 +120,12 @@ export const Window: React.FC<WindowProps> = ({
 
   return (
     <div className="fixed inset-0 pointer-events-none z-30 flex items-center justify-center px-2 pt-10 pb-20 sm:px-6 sm:pt-12 sm:pb-24">
+      {/* Phones only: tapping around the window closes it, like a sheet. Desktop keeps native window behaviour. */}
+      <div
+        onClick={onClose}
+        className="absolute inset-0 pointer-events-auto bg-[#001f27]/50 sm:hidden"
+        aria-hidden="true"
+      />
       <motion.div
         ref={containerRef}
         drag={!isMaximized}
