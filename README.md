@@ -56,7 +56,7 @@ Each desktop item (Projects, Certificates, About, Skills, CV, Experience, GitHub
 |---|---|
 | `data/profile.ts` | About panel, top bar, contact info |
 | `data/projects.ts` | Projects folder |
-| `data/skills.ts` | Skills tree |
+| `data/skillTrees.ts` | Skills tree — Backend, Machine Learning and Software Architect trees |
 | `data/certificates.ts` | Certificates folder |
 | `data/experience.ts` | Experience widget & timeline |
 
