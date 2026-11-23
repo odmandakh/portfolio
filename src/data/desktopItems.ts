@@ -1,5 +1,7 @@
 import { DesktopItem } from '../types/portfolio';
 import { getYearsOfExperience } from '../utils/date';
+import { projectsData } from './projects';
+import { certificatesData } from './certificates';
 
 export const desktopItems: DesktopItem[] = [
   {
@@ -7,7 +9,7 @@ export const desktopItems: DesktopItem[] = [
     title: 'Projects',
     type: 'folder',
     icon: 'FolderGit2',
-    badge: '13',
+    badge: projectsData.length,
     description: 'Projects'
   },
   {
@@ -15,7 +17,7 @@ export const desktopItems: DesktopItem[] = [
     title: 'Certificates',
     type: 'folder',
     icon: 'FolderAward',
-    badge: '4',
+    badge: certificatesData.length,
     description: 'Certificates'
   },
   {
@@ -53,7 +55,6 @@ export const desktopItems: DesktopItem[] = [
     title: 'GitHub Activity',
     type: 'widget',
     icon: 'Github',
-    badge: '2.4k',
     description: 'GitHub Activity'
   },
   {
@@ -61,7 +62,6 @@ export const desktopItems: DesktopItem[] = [
     title: 'LeetCode Stats',
     type: 'widget',
     icon: 'Code',
-    badge: '642',
     description: 'LeetCode Stats'
   }
 ];

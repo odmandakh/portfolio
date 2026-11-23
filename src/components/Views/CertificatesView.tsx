@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Folder,
   Award,
   Search,
-  ExternalLink,
-  ShieldCheck,
-  Calendar,
   ArrowLeft,
   ArrowRight,
   Grid,
@@ -13,14 +10,15 @@ import {
   ChevronRight,
   HardDrive,
   Tag,
-  FileText,
-  X,
   Layers,
-  Copy,
-  Check
+  FileText
 } from 'lucide-react';
-import { certificatesData, certificateCategories } from '../../data/certificates';
+import { certificatesData, certificateCategories, isCertificateExpired } from '../../data/certificates';
 import { Certificate, DesktopWindowId } from '../../types/portfolio';
+import { CertificateInfo } from './CertificateInfo';
+
+// Shared column template so header and rows line up; minmax(0, …) lets cells truncate instead of overlapping
+const LIST_COLUMNS = 'grid grid-cols-[minmax(0,2.5fr)_minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)] gap-x-3';
 
 interface CertificatesViewProps {
   onNavigate?: (id: DesktopWindowId) => void;
@@ -32,69 +30,8 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [modalSize, setModalSize] = useState<{ width: number | null; height: number | null }>({
-    width: null,
-    height: null
-  });
-  const [copiedCredentialId, setCopiedCredentialId] = useState(false);
 
-  const modalRef = React.useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setCopiedCredentialId(false);
-  }, [selectedCert?.id]);
-
-  const handleCopyCredentialId = () => {
-    if (!selectedCert) return;
-    navigator.clipboard.writeText(selectedCert.credentialId);
-    setCopiedCredentialId(true);
-    setTimeout(() => setCopiedCredentialId(false), 1500);
-  };
-
-  const handleModalResizeStart = (e: React.PointerEvent, handle: 'e' | 's' | 'se' | 'sw' | 'w') => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    const startX = e.clientX;
-    const startY = e.clientY;
-
-    const container = modalRef.current;
-    if (!container) return;
-    const rect = container.getBoundingClientRect();
-    const startWidth = rect.width;
-    const startHeight = rect.height;
-
-    const onPointerMove = (moveEvent: PointerEvent) => {
-      moveEvent.preventDefault();
-      const deltaX = moveEvent.clientX - startX;
-      const deltaY = moveEvent.clientY - startY;
-
-      let newWidth = startWidth;
-      let newHeight = startHeight;
-
-      if (handle.includes('e')) {
-        newWidth = Math.max(320, Math.min(window.innerWidth - 32, startWidth + deltaX));
-      } else if (handle.includes('w')) {
-        newWidth = Math.max(320, Math.min(window.innerWidth - 32, startWidth - deltaX));
-      }
-
-      if (handle.includes('s')) {
-        newHeight = Math.max(260, Math.min(window.innerHeight - 32, startHeight + deltaY));
-      }
-
-      setModalSize({ width: newWidth, height: newHeight });
-    };
-
-    const onPointerUp = () => {
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
-    };
-
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
-  };
-
-  const tags = ['All', 'AWS', 'CKA', 'SymfonyCasts'];
+  const tags = ['All', ...Array.from(new Set(certificatesData.flatMap((c) => (c.tag ? [c.tag] : []))))];
 
   const filteredCerts = certificatesData.filter((cert) => {
     const matchesCategory = activeCategory === 'all' || cert.categoryId === activeCategory;
@@ -115,9 +52,8 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-1">
             <button 
-              disabled={!selectedCert}
-              onClick={() => setSelectedCert(null)}
-              className="p-1.5 rounded-md hover:bg-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer disabled:cursor-not-allowed"
+              disabled
+              className="p-1.5 rounded-md opacity-30 cursor-not-allowed"
               title="Back"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-zinc-300" />
@@ -138,15 +74,9 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
             <span>odmandakh</span>
             <ChevronRight className="w-3 h-3 text-[#586e75]" />
             <span className="text-[#eee8d5] font-bold flex items-center gap-1">
-              <Folder className="w-3 h-3 text-[#b58900]" />
+              <Folder className="w-3 h-3 text-[#268bd2] fill-[#268bd2]/20" />
               Certificates
             </span>
-            {selectedCert && (
-              <>
-                <ChevronRight className="w-3 h-3 text-[#586e75]" />
-                <span className="text-[#2aa198] font-bold">{selectedCert.title}</span>
-              </>
-            )}
           </div>
         </div>
 
@@ -206,6 +136,7 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
                 <span className="truncate">Projects</span>
               </button>
               <button
+                onClick={() => setSelectedCert(null)}
                 className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 transition-colors cursor-pointer bg-[#002b36] text-[#eee8d5] font-semibold border border-[#2aa198]/40"
               >
                 <Award className="w-3.5 h-3.5 text-[#b58900]" />
@@ -277,31 +208,37 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
           </div>
         </div>
 
-        {/* Finder Content Canvas */}
-        <div className="flex-1 bg-[#002b36] p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+        {/* Finder Content Canvas, with a preview pane on the right for the selected certificate */}
+        <div className="flex-1 min-w-0 flex flex-col md:flex-row overflow-hidden">
+        <div
+          onClick={() => setSelectedCert(null)}
+          className={`flex-1 min-w-0 min-h-0 bg-[#002b36] custom-scrollbar ${
+            viewMode === 'list' ? 'overflow-auto' : 'p-4 sm:p-6 overflow-y-auto'
+          }`}
+        >
           {viewMode === 'grid' ? (
             /* Grid View */
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-3">
               {filteredCerts.map((cert) => (
                 <div
                   key={cert.id}
-                  onClick={() => setSelectedCert(cert)}
-                  className="group flex flex-col items-center text-center p-3 rounded-xl hover:bg-[#073642]/60 transition-all cursor-pointer space-y-2 border border-transparent hover:border-[#2aa198]/30"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedCert((current) => (current?.id === cert.id ? null : cert));
+                  }}
+                  className={`group flex flex-col items-center text-center p-3 rounded-xl hover:bg-[#073642]/60 transition-colors cursor-pointer space-y-1.5 ${
+                    selectedCert?.id === cert.id ? 'bg-[#2aa198]/20' : ''
+                  }`}
                 >
-                  <div className="relative">
-                    <div className="w-20 h-20 rounded-2xl bg-[#073642] border border-[#2aa198]/30 flex items-center justify-center text-[#b58900] group-hover:scale-105 group-hover:border-[#2aa198]/60 transition-transform shadow-md">
-                      <FileText className="w-10 h-10 text-[#b58900]" />
-                    </div>
-                    <span className={`absolute -top-1 -right-1 p-0.5 rounded-full bg-[#002b36] border shadow ${
-                      cert.outdated ? 'text-[#cb4b16] border-[#cb4b16]/40' : 'text-[#859900] border-[#2aa198]/30'
-                    }`}>
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
+                  <FileText className="w-14 h-14 text-[#b58900]" strokeWidth={1.25} />
 
-                  <div>
-                    <h3 className="text-xs font-bold text-[#eee8d5] group-hover:text-[#2aa198] transition-colors line-clamp-2">
-                      {cert.title}
+                  <div className="min-w-0 max-w-full">
+                    <h3 className="text-xs font-medium text-[#eee8d5] flex items-center justify-center gap-1.5">
+                      <span className="line-clamp-2">{cert.title}</span>
+                      <span
+                        className={`w-1.5 h-1.5 shrink-0 rounded-full ${isCertificateExpired(cert) ? 'bg-[#cb4b16]' : 'bg-[#859900]'}`}
+                        title={isCertificateExpired(cert) ? 'Expired' : 'Valid'}
+                      />
                     </h3>
                     <p className="text-[10px] text-[#839496] font-mono mt-0.5">
                       {cert.issueDate}
@@ -311,40 +248,40 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
               ))}
             </div>
           ) : (
-            /* List View */
-            <div className="bg-[#073642]/60 rounded-xl border border-[#2aa198]/30 overflow-hidden divide-y divide-[#2aa198]/20 text-xs">
-              <div className="grid grid-cols-12 px-4 py-2 bg-[#073642] text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono">
-                <span className="col-span-5">Certificate Name</span>
-                <span className="col-span-3">Issuer</span>
-                <span className="col-span-2">Status</span>
-                <span className="col-span-2 text-right">Issue Date</span>
+            /* List View — edge-to-edge like a real Finder window */
+            <div className="min-w-[560px] text-xs">
+              <div className={`${LIST_COLUMNS} sticky top-0 z-10 px-4 py-2 bg-[#073642] border-b border-[#2aa198]/30 text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono`}>
+                <span>Certificate Name</span>
+                <span>Issuer</span>
+                <span>Status</span>
+                <span className="text-right">Issue Date</span>
               </div>
 
               {filteredCerts.map((cert) => (
                 <div
                   key={cert.id}
-                  onClick={() => setSelectedCert(cert)}
-                  className="grid grid-cols-12 px-4 py-3 items-center hover:bg-[#002b36]/60 transition-colors cursor-pointer text-[#eee8d5]"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedCert((current) => (current?.id === cert.id ? null : cert));
+                  }}
+                  className={`${LIST_COLUMNS} px-4 py-2.5 items-center odd:bg-[#073642]/30 hover:bg-[#2aa198]/15 transition-colors cursor-pointer text-[#eee8d5] ${
+                    selectedCert?.id === cert.id ? '!bg-[#2aa198]/20' : ''
+                  }`}
                 >
-                  <div className="col-span-5 flex items-center space-x-2 font-semibold">
-                    <FileText className="w-4 h-4 text-[#b58900] shrink-0" />
-                    <span className="truncate">{cert.title}</span>
+                  <div className="flex items-center space-x-2 font-semibold min-w-0">
+                    <FileText className="w-4 h-4 shrink-0 text-[#b58900]" />
+                    <span className="truncate" title={cert.title}>{cert.title}</span>
                   </div>
-                  <div className="col-span-3 text-[#2aa198] font-medium truncate">
+                  <div className="min-w-0 truncate text-[#839496]" title={cert.issuer}>
                     {cert.issuer}
                   </div>
-                  <div className="col-span-2 font-mono text-[10px]">
-                    {cert.outdated ? (
-                      <span className="px-2 py-0.5 rounded bg-[#cb4b16]/20 text-[#cb4b16] border border-[#cb4b16]/30 font-bold">
-                        Expired
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded bg-[#859900]/20 text-[#859900] border border-[#859900]/30 font-bold">
-                        Verified
-                      </span>
-                    )}
+                  <div className="min-w-0 text-[11px]">
+                    <span className="flex items-center gap-1.5 text-[#839496]">
+                      <span className={`w-1.5 h-1.5 rounded-full ${isCertificateExpired(cert) ? 'bg-[#cb4b16]' : 'bg-[#859900]'}`} />
+                      {isCertificateExpired(cert) ? 'Expired' : 'Valid'}
+                    </span>
                   </div>
-                  <div className="col-span-2 text-right font-mono text-[11px] text-[#839496]">
+                  <div className="min-w-0 truncate text-right font-mono text-[11px] text-[#839496]">
                     {cert.issueDate}
                   </div>
                 </div>
@@ -358,132 +295,15 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({ onNavigate }
             </div>
           )}
         </div>
+
+        {selectedCert && (
+          <aside className="md:w-1/2 shrink-0 min-h-0 max-h-[55%] md:max-h-none flex flex-col border-t md:border-t-0 md:border-l border-[#2aa198]/20 bg-[#002b36]">
+            <CertificateInfo certificate={selectedCert} />
+          </aside>
+        )}
+        </div>
       </div>
 
-      {/* QuickLook Inspection Overlay */}
-      {selectedCert && (
-        <div 
-          className="fixed inset-0 z-50 bg-[#002b36]/80 backdrop-blur-md flex items-center justify-center p-4"
-          onClick={() => setSelectedCert(null)}
-        >
-          <div 
-            ref={modalRef}
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: modalSize.width ? `${modalSize.width}px` : undefined,
-              height: modalSize.height ? `${modalSize.height}px` : undefined,
-            }}
-            className={`bg-[#073642] border border-[#2aa198]/40 rounded-2xl p-6 shadow-2xl space-y-5 text-[#eee8d5] relative font-sans overflow-y-auto max-h-[90vh] ${
-              modalSize.width ? '' : 'w-full max-w-lg'
-            }`}
-          >
-            <button
-              onClick={() => setSelectedCert(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-xl bg-[#002b36] hover:bg-[#002b36]/80 text-[#839496] hover:text-[#eee8d5] transition-colors cursor-pointer border border-[#2aa198]/30 z-10"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="flex items-center space-x-3">
-              <div className={`p-3 rounded-2xl bg-[#002b36] border ${
-                selectedCert.outdated ? 'border-[#cb4b16]/40 text-[#cb4b16]' : 'border-[#2aa198]/40 text-[#b58900]'
-              }`}>
-                <Award className="w-8 h-8" />
-              </div>
-              <div>
-                <span className={`text-[10px] font-bold uppercase tracking-wider block font-mono ${
-                  selectedCert.outdated ? 'text-[#cb4b16]' : 'text-[#2aa198]'
-                }`}>
-                  {selectedCert.outdated ? 'Legacy Credential' : 'Verified Credential'}
-                </span>
-                <h2 className="text-xl font-black text-[#eee8d5] tracking-tight">
-                  {selectedCert.title}
-                </h2>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-[#002b36] border border-[#2aa198]/30 space-y-2 text-xs font-mono">
-              <div className="flex justify-between">
-                <span className="text-[#586e75]">Issuer:</span>
-                <span className="text-[#eee8d5] font-semibold">{selectedCert.issuer}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[#586e75]">Status:</span>
-                <span className={`font-bold ${selectedCert.outdated ? 'text-[#cb4b16]' : 'text-[#859900]'}`}>
-                  {selectedCert.outdated ? 'Expired / Legacy' : 'Verified & Active'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[#586e75]">Issue Date:</span>
-                <span className="text-[#eee8d5]">{selectedCert.issueDate}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-[#586e75]">Credential ID:</span>
-                <button
-                  onClick={handleCopyCredentialId}
-                  className="text-[#2aa198] font-bold flex items-center gap-1.5 hover:text-[#eee8d5] transition-colors cursor-pointer"
-                  title="Copy credential ID"
-                >
-                  <span>{selectedCert.credentialId}</span>
-                  {copiedCredentialId ? (
-                    <Check className="w-3 h-3 text-[#859900]" />
-                  ) : (
-                    <Copy className="w-3 h-3" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <p className="text-xs text-[#93a1a1] leading-relaxed font-sans">
-              {selectedCert.description}
-            </p>
-
-            <div className="pt-3 border-t border-[#2aa198]/20 flex justify-end">
-              <a
-                href={selectedCert.verifyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 rounded-xl bg-[#2aa198] hover:bg-[#2aa198]/90 text-xs font-bold text-[#002b36] flex items-center space-x-2 shadow-md transition-colors cursor-pointer"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                <span>Verify Credential Online</span>
-                <ExternalLink className="w-3.5 h-3.5 ml-1" />
-              </a>
-            </div>
-
-            {/* Resize Handles */}
-            <div
-              onPointerDown={(e) => handleModalResizeStart(e, 'e')}
-              className="absolute top-0 right-0 w-2.5 h-full cursor-e-resize z-30 hover:bg-[#2aa198]/20 transition-colors"
-              title="Drag to resize width"
-            />
-            <div
-              onPointerDown={(e) => handleModalResizeStart(e, 's')}
-              className="absolute bottom-0 left-0 h-2.5 w-full cursor-s-resize z-30 hover:bg-[#2aa198]/20 transition-colors"
-              title="Drag to resize height"
-            />
-            <div
-              onPointerDown={(e) => handleModalResizeStart(e, 'w')}
-              className="absolute top-0 left-0 w-2.5 h-full cursor-w-resize z-30 hover:bg-[#2aa198]/20 transition-colors"
-              title="Drag to resize width"
-            />
-            <div
-              onPointerDown={(e) => handleModalResizeStart(e, 'se')}
-              className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize z-40 flex items-center justify-center group"
-              title="Drag to resize window"
-            >
-              <div className="w-3 h-3 border-r-2 border-b-2 border-[#2aa198]/60 group-hover:border-[#2aa198] transition-colors rounded-br-sm" />
-            </div>
-            <div
-              onPointerDown={(e) => handleModalResizeStart(e, 'sw')}
-              className="absolute bottom-0 left-0 w-6 h-6 cursor-sw-resize z-40 flex items-center justify-center group"
-              title="Drag to resize window"
-            >
-              <div className="w-3 h-3 border-l-2 border-b-2 border-[#2aa198]/60 group-hover:border-[#2aa198] transition-colors rounded-bl-sm" />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

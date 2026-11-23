@@ -1,62 +1,80 @@
-import React, { useState } from 'react';
-import { 
-  Folder, 
-  Search, 
-  ExternalLink, 
-  Github, 
-  ArrowLeft, 
-  ArrowRight, 
-  Grid, 
-  List as ListIcon, 
-  ChevronRight, 
-  HardDrive, 
-  Star, 
-  Tag, 
-  Calendar, 
-  Activity, 
-  Terminal, 
-  Sparkles, 
-  Layers, 
-  CheckCircle2, 
-  X,
-  FileCode,
-  Info,
+import React, { useEffect, useState } from 'react';
+import {
+  Folder,
+  Search,
+  ArrowLeft,
+  ArrowRight,
+  Grid,
+  List as ListIcon,
+  ChevronRight,
+  HardDrive,
+  Tag,
+  Layers,
   Award
 } from 'lucide-react';
-import { projectsData } from '../../data/projects';
-import { Project, DesktopWindowId } from '../../types/portfolio';
+import { projectsData, projectFolders } from '../../data/projects';
+import { Project, ProjectFolderId, DesktopWindowId } from '../../types/portfolio';
+import { FolderFiles, FolderFile, readmeFile, linkFile } from '../Common/FolderFiles';
+import { ProjectReadme, ProjectInfo } from './ProjectReadme';
 
 interface ProjectsViewProps {
   onNavigate?: (id: DesktopWindowId) => void;
 }
 
-const STATUS_CONFIG: Record<Project['status'], {
-  label: string;
-  dot: string;
-  badge: string;
-  icon: React.ComponentType<{ className?: string }>;
-  iconRing: string;
-}> = {
-  done: { label: 'Done', dot: 'bg-[#859900]', badge: 'bg-[#859900]/10 text-[#859900] border-[#859900]/30', icon: CheckCircle2, iconRing: 'text-[#859900] border-[#859900]/40' },
-  ongoing: { label: 'Ongoing', dot: 'bg-[#b58900]', badge: 'bg-[#b58900]/10 text-[#b58900] border-[#b58900]/30', icon: Activity, iconRing: 'text-[#b58900] border-[#b58900]/40' },
-  planned: { label: 'Planned', dot: 'bg-[#586e75]', badge: 'bg-[#586e75]/10 text-[#93a1a1] border-[#586e75]/30', icon: Calendar, iconRing: 'text-[#93a1a1] border-[#586e75]/40' },
-  disbanded: { label: 'Cancelled', dot: 'bg-[#dc322f]', badge: 'bg-[#dc322f]/10 text-[#dc322f] border-[#dc322f]/30', icon: X, iconRing: 'text-[#dc322f] border-[#dc322f]/40' }
+const STATUS_CONFIG: Record<Project['status'], { label: string; dot: string }> = {
+  done: { label: 'Done', dot: 'bg-[#859900]' },
+  ongoing: { label: 'Ongoing', dot: 'bg-[#b58900]' },
+  planned: { label: 'Planned', dot: 'bg-[#586e75]' },
+  disbanded: { label: 'Cancelled', dot: 'bg-[#dc322f]' }
 };
 
 const STATUS_ORDER: Project['status'][] = ['done', 'ongoing', 'planned', 'disbanded'];
 
+// Shared column template so header and rows line up; minmax(0, …) lets cells truncate instead of overlapping
+const LIST_COLUMNS = 'grid grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1.6fr)_minmax(0,1.2fr)_minmax(0,1.4fr)] gap-x-3';
+const FOLDER_LIST_COLUMNS = 'grid grid-cols-[minmax(0,1.5fr)_minmax(0,0.6fr)_minmax(0,3fr)] gap-x-3';
+
+const folderName = (id: ProjectFolderId) => projectFolders.find((f) => f.id === id)?.name ?? id;
+const folderItemCount = (id: ProjectFolderId) => projectsData.filter((p) => p.folder === id).length;
+
+// What sits inside a project's folder: its README, plus a shortcut for each link it has
+const projectFiles = (project: Project): FolderFile[] => [
+  readmeFile,
+  ...(project.demoUrl ? [linkFile('site', project.demoUrl)] : []),
+  ...(project.githubUrl ? [linkFile('repo', project.githubUrl, 'GitHub')] : [])
+];
+
 export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [currentFolder, setCurrentFolder] = useState<ProjectFolderId | null>(null);
+  // Which file in the open project is shown in the preview pane; nothing selected shows the project's info
+  const [previewFileId, setPreviewFileId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPreviewFileId(null);
+  }, [selectedProject?.id]);
   const [selectedTag, setSelectedTag] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const categories = ['All', 'Personal Project', 'Open Source', 'Professional'];
   const tags = ['All', ...Array.from(new Set(projectsData.map((p) => p.tag)))];
 
+  // At the Projects root, searching or picking a tag looks across every folder, like Finder search
+  const isFiltering = searchQuery !== '' || selectedTag !== 'All';
+  const showFolders = currentFolder === null && !isFiltering;
+
+  const openFolder = (id: ProjectFolderId | null) => {
+    setSelectedProject(null);
+    setCurrentFolder(id);
+  };
+
+  const goBack = () => {
+    if (selectedProject) setSelectedProject(null);
+    else setCurrentFolder(null);
+  };
+
   const filteredProjects = projectsData.filter((project) => {
-    const matchesCategory = selectedCategory === 'All' || project.category === selectedCategory;
+    const matchesCategory = currentFolder === null || project.folder === currentFolder;
     const matchesTag = selectedTag === 'All' || project.tag === selectedTag;
     const matchesSearch = searchQuery === '' || 
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -64,6 +82,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
       project.shortDescription.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesTag && matchesSearch;
   }).sort((a, b) => STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status));
+
+  const isListView = viewMode === 'list';
+  const files = selectedProject ? projectFiles(selectedProject) : [];
+
 
   return (
     <div className="flex flex-col h-full min-h-[520px] bg-[#002b36] text-[#93a1a1] overflow-hidden select-none font-sans">
@@ -73,8 +95,8 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-1">
             <button 
-              disabled={!selectedProject}
-              onClick={() => setSelectedProject(null)}
+              disabled={!selectedProject && !currentFolder}
+              onClick={goBack}
               className="p-1.5 rounded-md hover:bg-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer disabled:cursor-not-allowed"
               title="Back"
             >
@@ -95,10 +117,24 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
           <div className="flex items-center space-x-1 font-mono text-[11px] text-[#839496] bg-[#002b36] px-2 py-1 rounded-md border border-[#2aa198]/30">
             <span>odmandakh</span>
             <ChevronRight className="w-3 h-3 text-[#586e75]" />
-            <span className="text-[#eee8d5] font-bold flex items-center gap-1">
+            <button
+              onClick={() => openFolder(null)}
+              className="text-[#eee8d5] font-bold flex items-center gap-1 cursor-pointer hover:text-[#2aa198]"
+            >
               <Folder className="w-3 h-3 text-[#268bd2] fill-[#268bd2]/20" />
               Projects
-            </span>
+            </button>
+            {currentFolder && (
+              <>
+                <ChevronRight className="w-3 h-3 text-[#586e75]" />
+                <button
+                  onClick={() => openFolder(currentFolder)}
+                  className="text-[#eee8d5] font-bold cursor-pointer hover:text-[#2aa198] whitespace-nowrap"
+                >
+                  {folderName(currentFolder)}
+                </button>
+              </>
+            )}
             {selectedProject && (
               <>
                 <ChevronRight className="w-3 h-3 text-[#586e75]" />
@@ -157,6 +193,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
                 <HardDrive className="w-3 h-3 text-[#2aa198]" />
               </div>
               <button
+                onClick={() => openFolder(null)}
                 className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 transition-colors cursor-pointer bg-[#002b36] text-[#eee8d5] font-semibold border border-[#2aa198]/40"
               >
                 <Folder className="w-3.5 h-3.5 text-[#268bd2] fill-[#268bd2]/20" />
@@ -171,25 +208,23 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
               </button>
             </div>
 
-            {/* Categories Group */}
+            {/* Folders Group */}
             <div className="space-y-1">
               <div className="text-[10px] font-bold uppercase tracking-wider text-[#2aa198] px-2 py-1 flex items-center justify-between font-mono">
-                <span>Categories</span>
+                <span>Folders</span>
                 <Layers className="w-3 h-3 text-[#2aa198]" />
               </div>
-              {categories.map((cat) => (
+              {projectFolders.map((folder) => (
                 <button
-                  key={cat}
-                  onClick={() => {
-                    setSelectedProject(null);
-                    setSelectedCategory(cat);
-                  }}
+                  key={folder.id}
+                  onClick={() => openFolder(folder.id)}
                   className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-2 transition-colors cursor-pointer ${
-                    selectedCategory === cat ? 'bg-[#002b36] text-[#eee8d5] font-semibold border border-[#2aa198]/40' : 'text-[#839496] hover:bg-[#002b36]/50 hover:text-[#eee8d5]'
+                    currentFolder === folder.id ? 'bg-[#002b36] text-[#eee8d5] font-semibold border border-[#2aa198]/40' : 'text-[#839496] hover:bg-[#002b36]/50 hover:text-[#eee8d5]'
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full ${cat === 'All' ? 'bg-[#2aa198]' : 'bg-[#b58900]'}`} />
-                  <span className="truncate">{cat === 'All' ? 'All Categories' : cat}</span>
+                  <Folder className="w-3.5 h-3.5 shrink-0 text-[#268bd2] fill-[#268bd2]/20" />
+                  <span className="truncate flex-1">{folder.name}</span>
+                  <span className="text-[10px] font-mono text-[#586e75]">{folderItemCount(folder.id)}</span>
                 </button>
               ))}
             </div>
@@ -219,128 +254,76 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
           </div>
 
           <div className="mt-4 p-2 bg-[#002b36] rounded-xl border border-[#2aa198]/20 text-[10px] text-[#586e75] font-mono">
-            <div>{filteredProjects.length} items</div>
+            <div>
+              {selectedProject
+                ? `${files.length} items`
+                : showFolders ? `${projectFolders.length} folders` : `${filteredProjects.length} items`}
+            </div>
           </div>
         </div>
 
-        {/* Finder Content Area */}
-        <div className="flex-1 bg-[#002b36] p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+        {/* Finder Content Area, with a preview pane on the right once a project is open */}
+        <div className="flex-1 min-w-0 flex flex-col md:flex-row overflow-hidden">
+        <div
+          onClick={() => setPreviewFileId(null)}
+          className={`flex-1 min-w-0 min-h-0 bg-[#002b36] custom-scrollbar ${
+            isListView ? 'overflow-auto' : 'p-4 sm:p-6 overflow-y-auto'
+          }`}
+        >
           {selectedProject ? (
-            /* Selected Project Inspector Detail View */
-            <div className="space-y-6 text-[#93a1a1] animate-fadeIn">
-              <div className="flex items-center justify-between pb-3 border-b border-[#2aa198]/20">
-                <button
-                  onClick={() => setSelectedProject(null)}
-                  className="px-3 py-1 rounded-lg bg-[#073642] hover:bg-[#073642]/80 text-xs font-semibold text-[#2aa198] border border-[#2aa198]/30 flex items-center space-x-1.5 transition-colors cursor-pointer"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Back to Projects Folder</span>
-                </button>
-
-                <div className="flex items-center space-x-2">
-                  {selectedProject.githubUrl && (
-                    <a
-                      href={selectedProject.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-lg bg-[#073642] hover:bg-[#073642]/80 text-xs font-semibold text-[#eee8d5] border border-[#2aa198]/30 flex items-center space-x-1.5 transition-colors"
-                    >
-                      <Github className="w-3.5 h-3.5 text-[#2aa198]" />
-                      <span>Code Repo</span>
-                    </a>
-                  )}
-                  {selectedProject.demoUrl && (
-                    <a
-                      href={selectedProject.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-lg bg-[#2aa198] hover:bg-[#2aa198]/90 text-[#002b36] text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-sm"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                      <span>Open Live Demo</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {/* Project Title Card */}
-              <div className="p-6 rounded-2xl bg-[#073642] border border-[#2aa198]/30 space-y-3">
-                <div className="flex items-center space-x-3">
-                  <div className="p-3 rounded-2xl bg-[#002b36] border border-[#2aa198]/40 text-[#268bd2]">
-                    <Folder className="w-8 h-8 fill-[#268bd2]/20" />
-                  </div>
-                  <div>
-                    <div className="flex items-center flex-wrap gap-2">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border font-mono flex items-center gap-1.5 ${STATUS_CONFIG[selectedProject.status].badge}`}>
-                        <span className={`w-2 h-2 rounded-full ${STATUS_CONFIG[selectedProject.status].dot}`} />
-                        {STATUS_CONFIG[selectedProject.status].label}
-                      </span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#002b36] text-[#2aa198] border border-[#2aa198]/30 font-mono">
-                        {selectedProject.category}
-                      </span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#002b36] text-[#268bd2] border border-[#268bd2]/30 font-mono">
-                        {selectedProject.tag}
-                      </span>
-                      <span className="text-xs text-[#839496] font-mono flex items-center">
-                        <Calendar className="w-3 h-3 mr-1 text-[#2aa198]" />
-                        {selectedProject.date}
-                      </span>
+            /* Inside a project folder: README.md and link shortcuts */
+            <FolderFiles
+              files={files}
+              viewMode={viewMode}
+              selectedId={previewFileId}
+              onSelect={(file) => setPreviewFileId((current) => (current === file.id ? null : file.id))}
+            />
+          ) : showFolders ? (
+            viewMode === 'grid' ? (
+              /* Projects root: one folder per kind of project */
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+                {projectFolders.map((folder) => (
+                  <div
+                    key={folder.id}
+                    onClick={() => openFolder(folder.id)}
+                    title={folder.description}
+                    className="group flex flex-col items-center text-center p-3 rounded-xl hover:bg-[#073642]/60 transition-all cursor-pointer space-y-2 border border-transparent hover:border-[#2aa198]/30"
+                  >
+                    <Folder className="w-20 h-20 text-[#268bd2] fill-[#268bd2]/25 group-hover:scale-105 transition-transform" strokeWidth={1.25} />
+                    <div>
+                      <h3 className="text-xs font-bold text-[#eee8d5] group-hover:text-[#2aa198] transition-colors line-clamp-1">
+                        {folder.name}
+                      </h3>
+                      <p className="text-[10px] text-[#839496] mt-0.5 font-mono">
+                        {folderItemCount(folder.id)} items
+                      </p>
                     </div>
-                    <h2 className="text-2xl font-black text-[#eee8d5] tracking-tight mt-1">
-                      {selectedProject.title}
-                    </h2>
                   </div>
+                ))}
+              </div>
+            ) : (
+              <div className="min-w-[480px] text-xs">
+                <div className={`${FOLDER_LIST_COLUMNS} sticky top-0 z-10 px-4 py-2 bg-[#073642] border-b border-[#2aa198]/30 text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono`}>
+                  <span>Name</span>
+                  <span>Items</span>
+                  <span>Description</span>
                 </div>
-
-                <p className="text-xs text-[#93a1a1] leading-relaxed pt-2">
-                  {selectedProject.fullDescription}
-                </p>
-
-                {selectedProject.metrics && (
-                  <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#002b36] border border-[#2aa198]/30 text-[#859900] text-xs font-semibold">
-                    <Activity className="w-4 h-4 text-[#859900]" />
-                    <span>{selectedProject.metrics}</span>
+                {projectFolders.map((folder) => (
+                  <div
+                    key={folder.id}
+                    onClick={() => openFolder(folder.id)}
+                    className={`${FOLDER_LIST_COLUMNS} px-4 py-2.5 items-center odd:bg-[#073642]/30 hover:bg-[#2aa198]/15 transition-colors cursor-pointer text-[#eee8d5]`}
+                  >
+                    <div className="flex items-center space-x-2 font-semibold min-w-0">
+                      <Folder className="w-4 h-4 shrink-0 text-[#268bd2] fill-[#268bd2]/20" />
+                      <span className="truncate">{folder.name}</span>
+                    </div>
+                    <div className="font-mono text-[11px] text-[#839496]">{folderItemCount(folder.id)}</div>
+                    <div className="min-w-0 truncate text-[#839496]" title={folder.description}>{folder.description}</div>
                   </div>
-                )}
+                ))}
               </div>
-
-              {/* Tech Stack */}
-              <div className="p-4 rounded-xl bg-[#073642] border border-[#2aa198]/30 space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#2aa198] block font-mono">
-                  Tech Stack & Infrastructure
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedProject.technologies.map((tech, idx) => (
-                    <span key={idx} className="px-2.5 py-1 rounded-md bg-[#002b36] text-xs text-[#2aa198] font-mono border border-[#2aa198]/30">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Problem vs Solution */}
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-[#073642] border border-[#2aa198]/30 space-y-2">
-                  <h3 className="text-xs font-bold text-[#cb4b16] uppercase tracking-wider flex items-center space-x-1.5 font-mono">
-                    <Terminal className="w-3.5 h-3.5" />
-                    <span>The Problem</span>
-                  </h3>
-                  <p className="text-xs text-[#93a1a1] leading-relaxed">
-                    {selectedProject.problem}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-[#073642] border border-[#2aa198]/30 space-y-2">
-                  <h3 className="text-xs font-bold text-[#859900] uppercase tracking-wider flex items-center space-x-1.5 font-mono">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Engineered Solution</span>
-                  </h3>
-                  <p className="text-xs text-[#93a1a1] leading-relaxed">
-                    {selectedProject.solution}
-                  </p>
-                </div>
-              </div>
-            </div>
+            )
           ) : viewMode === 'grid' ? (
             /* Finder Icon Grid View */
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
@@ -348,25 +331,18 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
                 <div
                   key={project.id}
                   onClick={() => setSelectedProject(project)}
-                  className="group flex flex-col items-center text-center p-3 rounded-xl hover:bg-[#073642]/60 transition-all cursor-pointer space-y-2 border border-transparent hover:border-[#2aa198]/30"
+                  className="group flex flex-col items-center text-center p-3 rounded-xl hover:bg-[#073642]/60 transition-colors cursor-pointer space-y-1.5"
                 >
-                  <div className="relative">
-                    <div className="w-20 h-20 rounded-2xl bg-[#073642] border border-[#2aa198]/30 flex items-center justify-center text-[#268bd2] group-hover:scale-105 group-hover:border-[#2aa198]/60 transition-transform shadow-md">
-                      <Folder className="w-11 h-11 fill-[#268bd2]/20 text-[#268bd2]" />
-                    </div>
-                    <span
-                      className={`absolute -top-1 -right-1 p-0.5 rounded-full bg-[#002b36] border shadow ${STATUS_CONFIG[project.status].iconRing}`}
-                      title={STATUS_CONFIG[project.status].label}
-                    >
-                      {React.createElement(STATUS_CONFIG[project.status].icon, { className: 'w-3.5 h-3.5' })}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xs font-bold text-[#eee8d5] group-hover:text-[#2aa198] transition-colors line-clamp-1">
-                      {project.title}
+                  <Folder className="w-16 h-16 text-[#268bd2] fill-[#268bd2]/25" strokeWidth={1.25} />
+                  <div className="min-w-0 max-w-full">
+                    <h3 className="text-xs font-medium text-[#eee8d5] flex items-center justify-center gap-1.5">
+                      <span className="truncate">{project.title}</span>
+                      <span
+                        className={`w-1.5 h-1.5 shrink-0 rounded-full ${STATUS_CONFIG[project.status].dot}`}
+                        title={STATUS_CONFIG[project.status].label}
+                      />
                     </h3>
-                    <p className="text-[10px] text-[#839496] line-clamp-1 mt-0.5 font-mono">
+                    <p className="text-[10px] text-[#839496] line-clamp-1 mt-0.5">
                       {project.technologies.slice(0, 2).join(', ')}
                     </p>
                   </div>
@@ -374,60 +350,63 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({ onNavigate }) => {
               ))}
             </div>
           ) : (
-            /* Finder Detailed List View */
-            <div className="bg-[#073642]/60 rounded-xl border border-[#2aa198]/30 overflow-x-auto custom-scrollbar text-xs">
-              <div className="min-w-[620px] divide-y divide-[#2aa198]/20">
-                <div className="grid grid-cols-12 px-4 py-2.5 bg-[#073642] text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono items-center">
-                  <span className="col-span-4">Name</span>
-                  <span className="col-span-3">Category</span>
-                  <span className="col-span-2">Tag</span>
-                  <span className="col-span-1">Date</span>
-                  <span className="col-span-2 text-right">Tech Stack</span>
-                </div>
-
-                {filteredProjects.map((project) => (
-                  <div
-                    key={project.id}
-                    onClick={() => setSelectedProject(project)}
-                    className="grid grid-cols-12 px-4 py-3 items-center hover:bg-[#002b36]/60 transition-colors cursor-pointer text-[#eee8d5]"
-                  >
-                    <div className="col-span-4 flex items-center space-x-2 font-semibold min-w-0 pr-2">
-                      <span className="relative shrink-0">
-                        <Folder className="w-4 h-4 text-[#268bd2] fill-[#268bd2]/20" />
-                        <span
-                          className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full ${STATUS_CONFIG[project.status].dot}`}
-                          title={STATUS_CONFIG[project.status].label}
-                        />
-                      </span>
-                      <span className="truncate">{project.title}</span>
-                    </div>
-                    <div className="col-span-3 pr-2">
-                      <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-[#002b36] border border-[#2aa198]/30 text-[#2aa198] whitespace-nowrap">
-                        {project.category}
-                      </span>
-                    </div>
-                    <div className="col-span-2 pr-2">
-                      <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-[#002b36] border border-[#268bd2]/30 text-[#268bd2] whitespace-nowrap">
-                        {project.tag}
-                      </span>
-                    </div>
-                    <div className="col-span-1 font-mono text-[11px] text-[#839496] whitespace-nowrap">
-                      {project.date}
-                    </div>
-                    <div className="col-span-2 text-right font-mono text-[10px] text-[#839496] truncate">
-                      {project.technologies.slice(0, 2).join(', ')}
-                    </div>
-                  </div>
-                ))}
+            /* Finder Detailed List View — edge-to-edge like a real Finder window */
+            <div className="min-w-[640px] text-xs">
+              <div className={`${LIST_COLUMNS} sticky top-0 z-10 px-4 py-2 bg-[#073642] border-b border-[#2aa198]/30 text-[10px] font-bold uppercase tracking-wider text-[#2aa198] font-mono`}>
+                <span>Name</span>
+                <span>Folder</span>
+                <span>Kind</span>
+                <span>Date</span>
+                <span className="text-right">Tech Stack</span>
               </div>
+
+              {filteredProjects.map((project) => (
+                <div
+                  key={project.id}
+                  onClick={() => setSelectedProject(project)}
+                  className={`${LIST_COLUMNS} px-4 py-2.5 items-center odd:bg-[#073642]/30 hover:bg-[#2aa198]/15 transition-colors cursor-pointer text-[#eee8d5]`}
+                >
+                  <div className="flex items-center space-x-2 font-semibold min-w-0">
+                    <Folder className="w-4 h-4 shrink-0 text-[#268bd2] fill-[#268bd2]/20" />
+                    <span className="truncate">{project.title}</span>
+                    <span
+                      className={`w-1.5 h-1.5 shrink-0 rounded-full ${STATUS_CONFIG[project.status].dot}`}
+                      title={STATUS_CONFIG[project.status].label}
+                    />
+                  </div>
+                  <div className="min-w-0 truncate text-[#839496]" title={folderName(project.folder)}>
+                    {folderName(project.folder)}
+                  </div>
+                  <div className="min-w-0 truncate text-[#839496]" title={project.tag}>
+                    {project.tag}
+                  </div>
+                  <div className="min-w-0 truncate font-mono text-[11px] text-[#839496]" title={project.date}>
+                    {project.date}
+                  </div>
+                  <div className="min-w-0 truncate text-right font-mono text-[10px] text-[#839496]" title={project.technologies.join(', ')}>
+                    {project.technologies.slice(0, 2).join(', ')}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
-          {filteredProjects.length === 0 && (
+          {!showFolders && !selectedProject && filteredProjects.length === 0 && (
             <div className="p-12 text-center text-[#586e75] text-xs font-mono">
-              Folder is empty. No projects match your search query.
+              {isFiltering ? 'No projects match your search or tag filter.' : 'This folder is empty.'}
             </div>
           )}
+        </div>
+
+        {selectedProject && (
+          <aside className="md:w-1/2 shrink-0 min-h-0 max-h-[55%] md:max-h-none flex flex-col border-t md:border-t-0 md:border-l border-[#2aa198]/20 bg-[#002b36]">
+            {previewFileId === 'readme' ? (
+              <ProjectReadme project={selectedProject} />
+            ) : (
+              <ProjectInfo project={selectedProject} />
+            )}
+          </aside>
+        )}
         </div>
       </div>
     </div>

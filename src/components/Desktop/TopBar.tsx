@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Wifi, 
-  Sun, 
-  CloudSun, 
   Info, 
   RotateCcw, 
-  CheckCircle2, 
-  Sparkles,
   Command,
   ExternalLink
 } from 'lucide-react';
@@ -119,9 +114,9 @@ export const TopBar: React.FC<TopBarProps> = ({
       {/* Right status indicators */}
       <div className="flex items-center gap-4 text-xs font-medium">
         {/* Availability Badge */}
-        <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#859900]/15 border border-[#859900]/30 text-[#859900] text-[11px] font-mono font-bold">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#859900] animate-pulse" />
-          <span>Available for hire</span>
+        <div className="hidden sm:flex items-center gap-1.5 text-[#93a1a1]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#859900]" />
+          <span>{profileData.status}</span>
         </div>
 
         {/* Time & Date */}

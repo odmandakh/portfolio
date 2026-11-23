@@ -5,6 +5,8 @@ import { readLocalCache, writeLocalCache } from '../utils/localCache';
 const CACHE_TTL_MS = 60 * 60 * 1000;
 const STALE_FALLBACK_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 const DAY_SECONDS = 86400;
+// Bumped when the cached shape changes so old entries aren't read with the new type
+const CACHE_VERSION = 2;
 
 interface LeetcodeStatsApiResponse {
   totalSolved: number;
@@ -51,7 +53,8 @@ interface LeetcodeContestsApiResponse {
 function computeStreakDays(calendar: Record<string, number>): number {
   const todayStart = Math.floor(Date.now() / 1000 / DAY_SECONDS) * DAY_SECONDS;
   let streak = 0;
-  let day = todayStart;
+  // Don't let an empty "today" break the streak before the day is over
+  let day = (calendar[todayStart] ?? 0) > 0 ? todayStart : todayStart - DAY_SECONDS;
   while ((calendar[day] ?? 0) > 0) {
     streak++;
     day -= DAY_SECONDS;
@@ -111,7 +114,7 @@ function buildCalendarDays(calendar: Record<string, number>): GithubDay[] {
   return days;
 }
 
-function timeAgo(timestampSeconds: number): string {
+export function timeAgo(timestampSeconds: number): string {
   const diffMs = Date.now() - timestampSeconds * 1000;
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   if (diffHours < 1) return 'Just now';
@@ -127,7 +130,7 @@ export function useLeetcodeStats(username: string) {
 
   useEffect(() => {
     let cancelled = false;
-    const cacheKey = `leetcode-stats:${username}`;
+    const cacheKey = `leetcode-stats:v${CACHE_VERSION}:${username}`;
 
     async function load() {
       const fresh = readLocalCache<LeetcodeStats>(cacheKey, CACHE_TTL_MS);
@@ -183,7 +186,7 @@ export function useLeetcodeStats(username: string) {
             .slice(0, 6)
             .map((s) => ({
               title: s.title,
-              timeAgo: timeAgo(Number(s.timestamp)),
+              timestamp: Number(s.timestamp),
               lang: s.lang
             })),
           contestsAttended: contests.attendedContestsCount,

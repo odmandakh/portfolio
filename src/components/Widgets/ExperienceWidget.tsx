@@ -1,13 +1,13 @@
 import React from 'react';
 import { Briefcase, ChevronRight, Award } from 'lucide-react';
-import { experienceWidgetSummary, experienceData } from '../../data/experience';
+import { experienceWidgetSummary } from '../../data/experience';
 
 interface ExperienceWidgetProps {
   onClick: () => void;
 }
 
 export const ExperienceWidget: React.FC<ExperienceWidgetProps> = ({ onClick }) => {
-  const currentRole = experienceData[0];
+  const { currentRole, progression } = experienceWidgetSummary;
 
   return (
     <button
@@ -29,31 +29,38 @@ export const ExperienceWidget: React.FC<ExperienceWidgetProps> = ({ onClick }) =
       </div>
 
       {/* Main Content */}
-      <div className="my-2 z-10">
-        <p className="text-lg font-bold text-[#eee8d5] tracking-tight leading-snug group-hover:text-[#2aa198] transition-colors">
-          {experienceWidgetSummary.currentTitle}
-        </p>
-        <p className="text-xs text-[#93a1a1] font-medium mt-0.5">
-          @ <span className="text-[#268bd2] font-semibold">{experienceWidgetSummary.currentCompany}</span>
-        </p>
-      </div>
+      {currentRole && (
+        <div className="my-2 z-10">
+          <p className="text-lg font-bold text-[#eee8d5] tracking-tight leading-snug group-hover:text-[#2aa198] transition-colors">
+            {currentRole.role}
+          </p>
+          <p className="text-xs text-[#93a1a1] font-medium mt-0.5">
+            @ <span className="text-[#268bd2] font-semibold">{currentRole.company}</span>
+          </p>
+        </div>
+      )}
 
       {/* Progression Indicator Timeline */}
       <div className="z-10 pt-2 border-t border-[#2aa198]/20 w-full">
-        <div className="flex items-center justify-between text-[11px] text-[#93a1a1] mb-1.5 font-mono">
-          <span className="flex items-center text-[#859900] font-medium">
-            {currentRole.impactMetric}
-          </span>
-          <span className="text-[#586e75]">{currentRole.period}</span>
-        </div>
+        {currentRole && (
+          <div className="flex items-center justify-between text-[11px] text-[#93a1a1] mb-1.5 font-mono">
+            <span className="flex items-center text-[#859900] font-medium">
+              {currentRole.impactMetric}
+            </span>
+            <span className="text-[#586e75]">{currentRole.period}</span>
+          </div>
+        )}
 
         {/* Minimal Timeline Dots */}
-        <div className="grid grid-cols-4 gap-1.5 pt-1">
-          {experienceWidgetSummary.progression.map((step, idx) => (
+        <div
+          className="grid gap-1.5 pt-1"
+          style={{ gridTemplateColumns: `repeat(${progression.length}, minmax(0, 1fr))` }}
+        >
+          {progression.map((step, idx) => (
             <div key={idx} className="flex flex-col items-center">
               <div 
                 className={`w-full h-1 rounded-full ${
-                  idx === experienceWidgetSummary.progression.length - 1 
+                  idx === progression.length - 1 
                     ? 'bg-[#6c71c4] shadow-sm shadow-[#6c71c4]' 
                     : 'bg-[#002b36]'
                 }`} 

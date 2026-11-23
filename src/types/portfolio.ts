@@ -1,7 +1,6 @@
 export interface ProfileData {
   name: string;
   title: string;
-  role: string;
   careerStartDate: string;
   location: string;
   avatarUrl: string;
@@ -16,10 +15,18 @@ export interface ProfileData {
   xUrl?: string;
 }
 
+export type ProjectFolderId = 'hobby' | 'professional' | 'plan';
+
+export interface ProjectFolder {
+  id: ProjectFolderId;
+  name: string;
+  description: string;
+}
+
 export interface Project {
   id: string;
   title: string;
-  category: string;
+  folder: ProjectFolderId;
   tag: string;
   status: 'done' | 'ongoing' | 'planned' | 'disbanded';
   shortDescription: string;
@@ -138,7 +145,7 @@ export interface LeetcodeStats {
   submissionCalendarDays: GithubDay[];
   recentSubmissions: {
     title: string;
-    timeAgo: string;
+    timestamp: number;
     lang: string;
   }[];
   contestsAttended: number;

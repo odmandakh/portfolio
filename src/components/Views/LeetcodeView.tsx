@@ -12,7 +12,7 @@ import {
   TrendingDown
 } from 'lucide-react';
 import { profileData } from '../../data/profile';
-import { useLeetcodeStats } from '../../hooks/useLeetcodeStats';
+import { useLeetcodeStats, timeAgo } from '../../hooks/useLeetcodeStats';
 
 const MONTH_LABELS = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -254,7 +254,7 @@ export const LeetcodeView: React.FC = () => {
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <div>
                     <span className="font-bold text-white block">{sub.title}</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">{sub.timeAgo} • Language: {sub.lang}</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">{timeAgo(sub.timestamp)} • Language: {sub.lang}</span>
                   </div>
                 </div>
               </div>

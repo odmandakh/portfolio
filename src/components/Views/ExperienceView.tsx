@@ -30,9 +30,11 @@ export const ExperienceView: React.FC = () => {
           </div>
         </div>
 
-        <div className="px-4 py-2 rounded-xl bg-[#002b36] border border-[#2aa198]/40 text-[#2aa198] text-xs font-mono font-bold text-center">
-          Current: {experienceWidgetSummary.currentTitle}
-        </div>
+        {experienceWidgetSummary.currentRole && (
+          <div className="px-4 py-2 rounded-xl bg-[#002b36] border border-[#2aa198]/40 text-[#2aa198] text-xs font-mono font-bold text-center">
+            Current: {experienceWidgetSummary.currentRole.role} @ {experienceWidgetSummary.currentRole.company}
+          </div>
+        )}
       </div>
 
       {/* Career Timeline Listing */}
@@ -74,6 +76,7 @@ export const ExperienceView: React.FC = () => {
               </div>
 
               {/* Bullet highlights */}
+              {entry.highlights.length > 0 && (
               <ul className="space-y-1.5 text-xs text-[#93a1a1] pl-1">
                 {entry.highlights.map((h, i) => (
                   <li key={i} className="flex items-start space-x-2">
@@ -82,8 +85,10 @@ export const ExperienceView: React.FC = () => {
                   </li>
                 ))}
               </ul>
+              )}
 
               {/* Technologies */}
+              {entry.technologies.length > 0 && (
               <div className="pt-2 border-t border-[#2aa198]/20 flex flex-wrap gap-1">
                 {entry.technologies.map((t, idx) => (
                   <span
@@ -94,6 +99,7 @@ export const ExperienceView: React.FC = () => {
                   </span>
                 ))}
               </div>
+              )}
             </div>
           </div>
         ))}

@@ -43,8 +43,14 @@ interface ContributionsApiResponse {
 }
 
 function computeCurrentStreak(days: GithubDay[]): number {
+  const today = new Date().toISOString().split('T')[0];
+  // Ignore future days, and don't let an empty "today" break the streak before the day is over
+  let i = days.length - 1;
+  while (i >= 0 && days[i].date > today) i--;
+  if (i >= 0 && days[i].date === today && days[i].count === 0) i--;
+
   let streak = 0;
-  for (let i = days.length - 1; i >= 0; i--) {
+  for (; i >= 0; i--) {
     if (days[i].count > 0) streak++;
     else break;
   }

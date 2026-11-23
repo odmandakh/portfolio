@@ -137,7 +137,7 @@ export const GithubView: React.FC = () => {
             <div
               key={i}
               className={`w-2.5 h-2.5 rounded-[2px] transition-colors ${getLevelColor(day.level)}`}
-              title={`${day.date}: ${day.count} commits`}
+              title={`${day.date}: ${day.count} contributions`}
             />
           ))}
         </div>

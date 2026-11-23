@@ -33,7 +33,7 @@ import {
   X
 } from 'lucide-react';
 import { skillNodes, skillCategories } from '../../data/skills';
-import { projectsData } from '../../data/projects';
+import { projectsData, projectFolders } from '../../data/projects';
 import { SkillNode } from '../../types/portfolio';
 
 // Dynamic Icon Resolver
@@ -279,7 +279,10 @@ export const SkillsView: React.FC = () => {
   // Find linked projects for focused skill
   const linkedProjects = useMemo(() => {
     if (!activeFocusNode) return [];
-    return projectsData.filter((p) => activeFocusNode.projectIds.includes(p.id));
+    // Only built work counts as evidence of a skill — planned or cancelled projects are left out
+    return projectsData.filter(
+      (p) => activeFocusNode.projectIds.includes(p.id) && (p.status === 'done' || p.status === 'ongoing')
+    );
   }, [activeFocusNode]);
 
   // Direct Parent Nodes
@@ -826,7 +829,7 @@ export const SkillsView: React.FC = () => {
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-[#eee8d5]">{p.title}</span>
                             <span className="text-[9px] font-mono text-[#2aa198] px-1.5 py-0.5 rounded bg-[#073642]">
-                              {p.category}
+                              {projectFolders.find((f) => f.id === p.folder)?.name}
                             </span>
                           </div>
                           <p className="text-[11px] text-[#839496] line-clamp-2">{p.shortDescription}</p>

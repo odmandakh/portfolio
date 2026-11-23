@@ -41,9 +41,9 @@ export const AboutView: React.FC = () => {
 
   const techStats = [
     { label: 'Years Experience', value: `${getYearsOfExperience(profileData.careerStartDate)}+` },
-    { label: 'Shipped Projects', value: `${projectsData.length}` },
+    { label: 'Shipped Projects', value: `${projectsData.filter((p) => p.status === 'done').length}` },
     { label: 'Certifications', value: `${certificatesData.length}` },
-    { label: 'Code Contributions', value: githubStats ? githubStats.totalContributionsYear.toLocaleString() : '—' }
+    { label: 'Contributions (Last Year)', value: githubStats ? githubStats.totalContributionsYear.toLocaleString() : '—' }
   ];
 
   const skillGroups: SkillGroup[] = [
@@ -160,7 +160,7 @@ export const AboutView: React.FC = () => {
                     Odmandakh Battulga
                   </h1>
                   <p className="text-xs font-semibold text-[#2aa198] font-mono">
-                    Senior Back-End Engineer
+                    {profileData.title}
                   </p>
                 </div>
               </div>

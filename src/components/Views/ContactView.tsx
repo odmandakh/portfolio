@@ -6,8 +6,6 @@ import {
   Mail, 
   User, 
   FileText,
-  Sparkles,
-  ShieldCheck,
   RotateCcw
 } from 'lucide-react';
 import { profileData } from '../../data/profile';
@@ -72,9 +70,6 @@ export const ContactView: React.FC = () => {
               <MessageSquare className="w-4 h-4 text-[#2aa198]" />
               <span>Messages</span>
             </div>
-            <span className="text-[10px] text-[#859900] font-mono font-semibold px-2 py-0.5 rounded bg-[#859900]/10 border border-[#859900]/30">
-              Online
-            </span>
           </div>
 
           {/* Contact / Conversation Preview Item */}
@@ -107,10 +102,7 @@ export const ContactView: React.FC = () => {
           </div>
         </div>
 
-        <div className="hidden md:flex items-center space-x-2 text-[11px] text-[#586e75] font-mono pt-2 border-t border-[#2aa198]/10">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#2aa198] shrink-0" />
-          <span>Encrypted transmission</span>
-        </div>
+
       </div>
 
       {/* Right Area: Clean Compose Area (No nested outer box) */}
@@ -149,7 +141,6 @@ export const ContactView: React.FC = () => {
             <div className="border-b border-[#2aa198]/20 pb-3">
               <h2 className="text-base sm:text-lg font-black text-[#eee8d5] tracking-tight flex items-center gap-2">
                 <span>New Message</span>
-                <Sparkles className="w-4 h-4 text-[#2aa198]" />
               </h2>
               <p className="text-xs text-[#2aa198] font-mono mt-0.5">
                 To: Odmandakh &lt;{profileData.email}&gt;
@@ -229,9 +220,8 @@ export const ContactView: React.FC = () => {
             )}
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-              <span className="text-[11px] text-[#586e75] flex items-center gap-1 font-mono">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#2aa198]" />
-                Direct delivery to {profileData.email}
+              <span className="text-[11px] text-[#586e75]">
+                Replies come from {profileData.email}
               </span>
 
               <button

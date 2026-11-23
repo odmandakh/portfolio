@@ -1,10 +1,16 @@
-import { Project } from '../types/portfolio';
+import { Project, ProjectFolder } from '../types/portfolio';
+
+export const projectFolders: ProjectFolder[] = [
+  { id: 'hobby', name: 'Hobby', description: 'Things built for fun and personal use' },
+  { id: 'professional', name: 'Professional', description: 'Work drawn from professional experience' },
+  { id: 'plan', name: 'Plan', description: 'Ideas lined up to build next' }
+];
 
 export const projectsData: Project[] = [
   {
     id: 'blobfish',
     title: 'blobfish',
-    category: 'Personal Project',
+    folder: 'plan',
     tag: 'Web Development',
     status: 'planned',
     shortDescription: 'Online marketplace to sell items for pets and sell pets.',
@@ -25,7 +31,7 @@ export const projectsData: Project[] = [
   {
     id: 'happy-pig',
     title: 'happy-pig',
-    category: 'Personal Project',
+    folder: 'plan',
     tag: 'Backend Service',
     status: 'planned',
     shortDescription: 'Analytics tool for pig farming operations.',
@@ -46,7 +52,7 @@ export const projectsData: Project[] = [
   {
     id: 'todo-orientation',
     title: 'todo-orientation',
-    category: 'Personal Project',
+    folder: 'plan',
     tag: 'Web Development',
     status: 'planned',
     shortDescription: 'Company orientation and employee onboarding task board.',
@@ -67,7 +73,7 @@ export const projectsData: Project[] = [
   {
     id: 'huzur-diy',
     title: 'huzur-diy',
-    category: 'Personal Project',
+    folder: 'plan',
     tag: 'Backend Service',
     status: 'planned',
     shortDescription: 'Online card games platform to play among friends.',
@@ -80,7 +86,6 @@ export const projectsData: Project[] = [
       'Synchronizing multi-player game state with minimal latency.',
       'Handling smooth card deal and flip animations using Motion.'
     ],
-    githubUrl: 'https://github.com/odmandakh/huzur-diy',
     featured: true,
     date: 'Planned',
     metrics: 'Planned Multiplayer Game Room',
@@ -89,7 +94,7 @@ export const projectsData: Project[] = [
   {
     id: 'food-suggestion',
     title: 'food-suggestion',
-    category: 'Personal Project',
+    folder: 'plan',
     tag: 'Web Development',
     status: 'planned',
     shortDescription: 'Food recommendation and dish testing platform (Foober for test).',
@@ -110,7 +115,7 @@ export const projectsData: Project[] = [
   {
     id: 'fhir-something',
     title: 'fhir-something',
-    category: 'Personal Project',
+    folder: 'plan',
     tag: 'Backend Service',
     status: 'planned',
     shortDescription: 'Healthcare data application using HL7 FHIR standards.',
@@ -131,7 +136,7 @@ export const projectsData: Project[] = [
   {
     id: 'snooker-shot',
     title: 'snooker-shot',
-    category: 'Personal Project',
+    folder: 'plan',
     tag: 'Data Science & ML',
     status: 'planned',
     shortDescription: 'Billiards & snooker shot advisor using image analysis.',
@@ -152,7 +157,7 @@ export const projectsData: Project[] = [
   {
     id: 'odmandakh-os',
     title: 'odmandakh-os',
-    category: 'Personal Project',
+    folder: 'hobby',
     tag: 'Web Development',
     status: 'done',
     shortDescription: 'Desktop-inspired interactive portfolio experience built with React & Motion.',
@@ -175,7 +180,7 @@ export const projectsData: Project[] = [
   {
     id: 'ecommerce-meat-store',
     title: 'ecommerce-meat-store',
-    category: 'Personal Project',
+    folder: 'plan',
     tag: 'Web Development',
     status: 'planned',
     shortDescription: 'Online meat store e-commerce platform with cold-chain delivery options.',
@@ -196,7 +201,7 @@ export const projectsData: Project[] = [
   {
     id: 'buff_hunter',
     title: 'buff_hunter',
-    category: 'Personal Project',
+    folder: 'plan',
     tag: 'Automation & Scraping',
     status: 'planned',
     shortDescription: 'Web scraper and bargain detector for buff.163.com and Lann market.',
@@ -209,7 +214,6 @@ export const projectsData: Project[] = [
       'Handling rate limits and anti-scraping measures on foreign marketplaces.',
       'Real-time price arbitrage algorithms and alert triggers.'
     ],
-    githubUrl: 'https://github.com/odmandakh/buff_hunter',
     featured: false,
     date: 'Planned',
     metrics: 'Planned Scraping & Arbitrage Bot',
@@ -218,7 +222,7 @@ export const projectsData: Project[] = [
   {
     id: 'leetcode',
     title: 'leetcode',
-    category: 'Personal Project',
+    folder: 'hobby',
     tag: 'Algorithms & Data Structures',
     status: 'ongoing',
     shortDescription: 'Personal repository of LeetCode problem solutions.',
@@ -240,21 +244,20 @@ export const projectsData: Project[] = [
   {
     id: 'pause-please',
     title: 'pause-please',
-    category: 'Personal Project',
+    folder: 'hobby',
     tag: 'Web Development',
     status: 'done',
-    shortDescription: 'Event booking, leaderboards, and level tracking for a tabletop game club.',
-    fullDescription: 'A web app for the Pause Please Club, supporting event booking, player leaderboards, and level tracking for Blood on the Clocktower and weekend game nights.',
-    technologies: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Motion'],
+    shortDescription: 'Event booking, match scoring, and a leaderboard for a board game club.',
+    fullDescription: 'A community platform for the Pause Please Club. Members book seats for Blood on the Clocktower nights on a 15-seat town square or spots at tabletop board-game events, staff score matches by role, and points feed a leaderboard with rank titles. The app is fully bilingual (English and Mongolian) with light and dark modes.',
+    technologies: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Firebase', 'Storybook'],
     problem: 'A tabletop game club needed a shared way to organize event sign-ups and track player progress across sessions instead of relying on scattered chat messages.',
-    solution: 'Built a club platform for booking upcoming game nights, tracking a player leaderboard, and recording level progression over time.',
-    architecture: 'React frontend built with Vite and Tailwind CSS, with Motion for UI transitions.',
+    solution: 'Built a club platform for booking game nights, scoring matches with a role-based points table, and ranking players on a leaderboard, plus an admin panel for events, payments, members, and an audit log.',
+    architecture: 'React and TypeScript single-page app built with Vite and Tailwind CSS, on Firebase: Firestore for data, Cloud Functions for server-side logic, Storage for uploads, and Hosting. Components are developed in Storybook with design tokens generated by Style Dictionary.',
     keyLearnings: [
-      'Designing a leaderboard and level-tracking model that stays fair across irregular attendance.',
+      'Designing role-based match scoring and a leaderboard that stay fair across irregular attendance.',
       'Building an event booking flow simple enough for a casual weekly club to actually use.'
     ],
     demoUrl: 'https://pauseplease.club',
-    githubUrl: 'https://github.com/odmandakh/pause-please',
     featured: false,
     date: 'Phase 1 Released',
     metrics: 'Club Event & Leaderboard Platform',
@@ -263,7 +266,7 @@ export const projectsData: Project[] = [
   {
     id: 'dotfiles',
     title: 'dotfiles',
-    category: 'Personal Project',
+    folder: 'hobby',
     tag: 'Developer Tooling',
     status: 'done',
     shortDescription: 'Personal ZSH shell configuration.',
@@ -276,9 +279,8 @@ export const projectsData: Project[] = [
       'Structuring shell configuration for easy syncing across multiple machines.',
       'Keeping a personal dev environment reproducible and version-controlled.'
     ],
-    githubUrl: 'https://github.com/odmandakh/dotfiles',
     featured: false,
-    date: 'Ongoing',
+    date: 'Maintained',
     metrics: 'Personal ZSH Configuration',
     folderColor: 'bg-sky-500/20 text-sky-400 border-sky-500/30'
   }

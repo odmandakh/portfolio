@@ -1,5 +1,10 @@
 import { Certificate } from '../types/portfolio';
 
+// Expired when explicitly flagged, or once the expiration date has passed
+export function isCertificateExpired(cert: Certificate, asOf: Date = new Date()): boolean {
+  return Boolean(cert.outdated) || (cert.expirationDate !== undefined && new Date(cert.expirationDate) < asOf);
+}
+
 export const certificatesData: Certificate[] = [
   {
     id: 'aws-cloud-practitioner',
@@ -18,7 +23,7 @@ export const certificatesData: Certificate[] = [
   },
   {
     id: 'symfonycasts-api-platform',
-    categoryId: 'frontend',
+    categoryId: 'software',
     categoryName: 'Software Engineering',
     tag: 'SymfonyCasts',
     title: 'SymfonyCasts - API Platform',
@@ -32,7 +37,7 @@ export const certificatesData: Certificate[] = [
   },
   {
     id: 'symfonycasts-composer',
-    categoryId: 'frontend',
+    categoryId: 'software',
     categoryName: 'Software Engineering',
     tag: 'SymfonyCasts',
     title: 'SymfonyCasts - Composer',
@@ -46,7 +51,7 @@ export const certificatesData: Certificate[] = [
   },
   {
     id: 'symfonycasts-php-namespaces',
-    categoryId: 'frontend',
+    categoryId: 'software',
     categoryName: 'Software Engineering',
     tag: 'SymfonyCasts',
     title: 'SymfonyCasts - PHP Namespaces',
@@ -62,6 +67,5 @@ export const certificatesData: Certificate[] = [
 
 export const certificateCategories = [
   { id: 'cloud', name: 'Cloud & Infrastructure', icon: 'Cloud' },
-  { id: 'frontend', name: 'Software Engineering', icon: 'Code' },
-  { id: 'ai', name: 'AI & Data Engineering', icon: 'Cpu' }
+  { id: 'software', name: 'Software Engineering', icon: 'Code' }
 ];

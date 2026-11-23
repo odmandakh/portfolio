@@ -3,6 +3,17 @@ import { getYearsOfExperience } from '../utils/date';
 
 export const experienceData: ExperienceEntry[] = [
   {
+    id: 'mezorn-software-engineer',
+    period: 'Aug 2026 — Present',
+    role: 'Software Engineer',
+    company: 'Mezorn LLC',
+    location: 'Ulaanbaatar, Mongolia',
+    type: 'Full-time',
+    current: true,
+    highlights: [],
+    technologies: []
+  },
+  {
     id: 'and-systems-ml-engineer',
     period: 'Sep 2024 — Apr 2026',
     role: 'Senior Machine Learning Engineer',
@@ -39,9 +50,9 @@ export const experienceData: ExperienceEntry[] = [
     location: 'Mongolia · Hybrid',
     type: 'Full-time',
     current: false,
-    impactMetric: '500M-user scale app',
+    impactMetric: '500M delivery app',
     highlights: [
-      'Built a 500M-user scale built-in app for the LendMN ecosystem using React.js, focusing on modularity and responsiveness.',
+      'Built 500M, a built-in app in the LendMN ecosystem for delivery from local stores within 500 meters, using React.js with a focus on modularity and responsiveness.',
       'Developed and maintained the admin panel for the LendMN lending site using the Symfony framework, including analytics, reporting, and user management features.',
       'Contributed to the migration from a monolithic architecture to a microservices-based system, improving scalability and deployment efficiency.',
       'Part of the core lending service team responsible for maintaining critical business logic and ensuring system stability and performance.'
@@ -53,7 +64,7 @@ export const experienceData: ExperienceEntry[] = [
     period: 'Jan 2019 — Nov 2019',
     role: 'Web Developer',
     company: 'Mono Solution',
-    location: 'Ulan Bator, Mongolia',
+    location: 'Ulaanbaatar, Mongolia',
     type: 'Full-time',
     current: false,
     highlights: [
@@ -77,14 +88,16 @@ export const experienceData: ExperienceEntry[] = [
   }
 ];
 
+const currentRole = experienceData.find((entry) => entry.current);
+
 export const experienceWidgetSummary = {
   totalYears: getYearsOfExperience(),
-  currentTitle: experienceData[0].role,
-  currentCompany: experienceData[0].company,
+  currentRole,
   progression: [
     { year: '2016', label: 'IT Manager' },
     { year: '2019', label: 'Web Developer' },
     { year: '2022', label: 'Senior Backend Dev' },
-    { year: '2024', label: 'Senior ML Engineer' }
+    { year: '2024', label: 'Senior ML Engineer' },
+    { year: '2026', label: 'Software Engineer' }
   ]
 };
