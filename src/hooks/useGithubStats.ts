@@ -5,7 +5,7 @@ import { readLocalCache, writeLocalCache } from '../utils/localCache';
 const CACHE_TTL_MS = 60 * 60 * 1000;
 const STALE_FALLBACK_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
-const LANGUAGE_COLORS: Record<string, string> = {
+export const LANGUAGE_COLORS: Record<string, string> = {
   TypeScript: '#3178c6',
   JavaScript: '#f1e05a',
   Go: '#00add8',
@@ -22,7 +22,7 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Vue: '#41b883',
   Ruby: '#701516'
 };
-const DEFAULT_LANGUAGE_COLOR = '#8b949e';
+export const DEFAULT_LANGUAGE_COLOR = '#8b949e';
 
 interface GithubApiUser {
   public_repos: number;

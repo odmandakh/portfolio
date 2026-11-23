@@ -1,39 +1,32 @@
 import React from 'react';
-import {
-  Code,
-  Flame,
-  CheckCircle2,
-  Clock,
-  Loader2,
-  Calendar,
-  Info,
-  Trophy,
-  TrendingUp,
-  TrendingDown
-} from 'lucide-react';
+import { ExternalLink, Loader2, TrendingUp, TrendingDown, CheckCircle2 } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { useLeetcodeStats, timeAgo } from '../../hooks/useLeetcodeStats';
 
-const MONTH_LABELS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-];
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-function getLevelColor(level: number): string {
-  switch (level) {
-    case 1: return 'bg-amber-950/80 border border-amber-800/40';
-    case 2: return 'bg-amber-700/80';
-    case 3: return 'bg-amber-500';
-    case 4: return 'bg-amber-300 shadow-sm shadow-amber-400/50';
-    default: return 'bg-zinc-800/60';
-  }
-}
+// LeetCode's submission greens; the empty cell is blended with the OS surface
+const LEVEL_COLORS = ['#20383e', '#0e4429', '#006d32', '#26a641', '#39d353'];
+
+const RING_RADIUS = 52;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
+const LeetcodeIcon: React.FC<{ className: string }> = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125 2.457 5.279 5.279 0 0 0 1.01 2.213l.022.028a5.26 5.26 0 0 0 2.052 1.583 5.334 5.334 0 0 0 2.484.285 5.267 5.267 0 0 0 2.247-.834l4.137-2.923a1.373 1.373 0 0 0 .393-1.892 1.375 1.375 0 0 0-1.89-.396l-4.138 2.924a2.53 2.53 0 0 1-1.082.401 2.562 2.562 0 0 1-1.2-.138 2.527 2.527 0 0 1-.989-.762 2.538 2.538 0 0 1-.487-1.066 2.57 2.57 0 0 1 .06-1.18 2.53 2.53 0 0 1 .581-1.01l3.856-4.128 5.405-5.789a1.374 1.374 0 0 0-.961-2.316zm7.228 10.876a1.374 1.374 0 0 0-1.374 1.374 1.374 1.374 0 0 0 .402.971l3.411 3.411a1.374 1.374 0 0 0 1.943-1.943l-3.411-3.411a1.374 1.374 0 0 0-.971-.402zM12.22 17.065a1.374 1.374 0 0 0-.972.402l-2.072 2.072a1.374 1.374 0 1 0 1.943 1.943l2.072-2.072a1.374 1.374 0 0 0-.971-2.345z" />
+  </svg>
+);
+
+const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <h3 className="text-sm font-semibold text-[#eeece6]">{children}</h3>
+);
 
 export const LeetcodeView: React.FC = () => {
   const { data: leetcodeData, loading, error } = useLeetcodeStats(profileData.leetcodeUsername);
 
   if (loading) {
     return (
-      <div className="p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-zinc-400 gap-2 text-sm font-mono">
+      <div className="min-h-full bg-[#0d2228] p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-[#eeece6]/60 gap-2 text-sm">
         <Loader2 className="w-5 h-5 animate-spin" />
         <span>Loading live LeetCode data...</span>
       </div>
@@ -42,11 +35,27 @@ export const LeetcodeView: React.FC = () => {
 
   if (error || !leetcodeData) {
     return (
-      <div className="p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-rose-400 text-sm font-mono text-center">
+      <div className="min-h-full bg-[#0d2228] p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-[#ef4743] text-sm text-center">
         Unable to load live LeetCode data right now. Please try again later.
       </div>
     );
   }
+
+  // LeetCode's own difficulty colours
+  const difficulties = [
+    { label: 'Easy', solved: leetcodeData.easySolved, total: leetcodeData.easyTotal, color: '#00b8a3' },
+    { label: 'Medium', solved: leetcodeData.mediumSolved, total: leetcodeData.mediumTotal, color: '#ffc01e' },
+    { label: 'Hard', solved: leetcodeData.hardSolved, total: leetcodeData.hardTotal, color: '#ff375f' }
+  ];
+
+  // Ring segments: each difficulty's share of all questions, laid end to end
+  let ringOffset = 0;
+  const ringSegments = difficulties.map((d) => {
+    const length = leetcodeData.totalQuestions > 0 ? (d.solved / leetcodeData.totalQuestions) * RING_CIRCUMFERENCE : 0;
+    const segment = { color: d.color, length, offset: ringOffset };
+    ringOffset += length;
+    return segment;
+  });
 
   const monthGroups: { key: string; label: string; days: typeof leetcodeData.submissionCalendarDays }[] = [];
   leetcodeData.submissionCalendarDays.forEach((day) => {
@@ -61,140 +70,115 @@ export const LeetcodeView: React.FC = () => {
 
   const submissionsInPastYear = leetcodeData.submissionCalendarDays.reduce((sum, day) => sum + day.count, 0);
 
+  const contestStats = [
+    { label: 'Contest rating', value: leetcodeData.contestRating.toLocaleString() },
+    { label: 'Global ranking', value: `#${leetcodeData.contestGlobalRanking.toLocaleString()}` },
+    { label: 'Top', value: `${leetcodeData.contestTopPercentage.toFixed(2)}%` },
+    { label: 'Attended', value: leetcodeData.contestsAttended.toLocaleString() }
+  ];
+
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto text-zinc-200">
-      {/* Top Header Card */}
-      <div className="p-6 rounded-2xl bg-zinc-950/60 border border-zinc-800 sm:backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-            <Code className="w-8 h-8" />
-          </div>
+    <div className="min-h-full bg-[#0d2228] text-[#eeece6]/75">
+    <div className="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto">
+      {/* Profile header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#2e4e50]">
+        <div className="flex items-center gap-3">
+          <LeetcodeIcon className="w-10 h-10 fill-[#ffa116]" />
           <div>
-            <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
-              <span>@{leetcodeData.username}</span>
-              <span className="text-xs font-mono font-normal text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
-                {leetcodeData.ranking}
-              </span>
-            </h2>
-            <p className="text-xs text-zinc-400">
-              Algorithmic problem solving & data structure practice
-            </p>
+            <h2 className="text-xl font-semibold text-[#eeece6]">{leetcodeData.username}</h2>
+            <p className="text-sm text-[#eeece6]/60">Rank {leetcodeData.ranking}</p>
           </div>
         </div>
 
-        <div
-          className="flex items-center space-x-2 text-xs font-mono text-amber-400 bg-zinc-900 px-3 py-1.5 rounded-xl border border-zinc-800"
-          title="Consecutive days with any LeetCode submission — not LeetCode's Daily Challenge streak"
+        <a
+          href={`https://leetcode.com/u/${leetcodeData.username}/`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-[#182f35] hover:bg-[#1f3a40] border border-[#2e4e50] hover:border-[#ffa116]/60 text-xs font-semibold text-[#eeece6] flex items-center gap-2 transition-colors"
         >
-          <Flame className="w-4 h-4 fill-amber-400" />
-          <span>{leetcodeData.streakDays} Days Active Streak</span>
-        </div>
+          View profile
+          <ExternalLink className="w-3.5 h-3.5 text-[#ffa116]" />
+        </a>
       </div>
 
-      {/* Main Problems Solved Dashboard Grid */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {/* Easy Solved */}
-        <div className="p-5 rounded-2xl bg-zinc-950/40 border border-zinc-800 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-emerald-400">
-            <span>Easy</span>
-            <span>{leetcodeData.easySolved} / {leetcodeData.easyTotal}</span>
+      {/* Solved problems: ring plus per-difficulty progress, like LeetCode's profile card */}
+      <div className="rounded-xl bg-[#182f35] p-5 flex flex-col sm:flex-row items-center gap-6">
+        <div className="relative w-32 h-32 shrink-0">
+          <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r={RING_RADIUS} fill="none" stroke="#1f343a" strokeWidth="6" />
+            {ringSegments.map((seg) => (
+              <circle
+                key={seg.color}
+                cx="60"
+                cy="60"
+                r={RING_RADIUS}
+                fill="none"
+                stroke={seg.color}
+                strokeWidth="6"
+                strokeDasharray={`${seg.length} ${RING_CIRCUMFERENCE - seg.length}`}
+                strokeDashoffset={-seg.offset}
+              />
+            ))}
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-semibold text-[#eeece6] tabular-nums">{leetcodeData.totalSolved}</span>
+            <span className="text-[11px] text-[#eeece6]/60">/ {leetcodeData.totalQuestions.toLocaleString()} solved</span>
           </div>
-          <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-            <div
-              style={{ width: `${(leetcodeData.easySolved / leetcodeData.easyTotal) * 100}%` }}
-              className="h-full bg-emerald-500 rounded-full"
-            />
-          </div>
-          <p className="text-[11px] text-zinc-500 font-mono text-right">
-            {((leetcodeData.easySolved / leetcodeData.easyTotal) * 100).toFixed(1)}% Completed
-          </p>
         </div>
 
-        {/* Medium Solved */}
-        <div className="p-5 rounded-2xl bg-zinc-950/40 border border-zinc-800 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-amber-400">
-            <span>Medium</span>
-            <span>{leetcodeData.mediumSolved} / {leetcodeData.mediumTotal}</span>
-          </div>
-          <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-            <div
-              style={{ width: `${(leetcodeData.mediumSolved / leetcodeData.mediumTotal) * 100}%` }}
-              className="h-full bg-amber-500 rounded-full"
-            />
-          </div>
-          <p className="text-[11px] text-zinc-500 font-mono text-right">
-            {((leetcodeData.mediumSolved / leetcodeData.mediumTotal) * 100).toFixed(1)}% Completed
-          </p>
-        </div>
-
-        {/* Hard Solved */}
-        <div className="p-5 rounded-2xl bg-zinc-950/40 border border-zinc-800 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-rose-400">
-            <span>Hard</span>
-            <span>{leetcodeData.hardSolved} / {leetcodeData.hardTotal}</span>
-          </div>
-          <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-            <div
-              style={{ width: `${(leetcodeData.hardSolved / leetcodeData.hardTotal) * 100}%` }}
-              className="h-full bg-rose-500 rounded-full"
-            />
-          </div>
-          <p className="text-[11px] text-zinc-500 font-mono text-right">
-            {((leetcodeData.hardSolved / leetcodeData.hardTotal) * 100).toFixed(1)}% Completed
+        <div className="flex-1 w-full space-y-3">
+          {difficulties.map((d) => (
+            <div key={d.label} className="space-y-1">
+              <div className="flex items-center justify-between text-xs">
+                <span style={{ color: d.color }} className="font-medium">{d.label}</span>
+                <span className="tabular-nums">
+                  <span className="text-[#eeece6]">{d.solved}</span>
+                  <span className="text-[#eeece6]/40"> / {d.total}</span>
+                </span>
+              </div>
+              <div className="h-1.5 rounded-full bg-[#1f343a] overflow-hidden">
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${d.total > 0 ? (d.solved / d.total) * 100 : 0}%`, backgroundColor: d.color }}
+                />
+              </div>
+            </div>
+          ))}
+          <p className="text-[11px] text-[#eeece6]/40 pt-1">
+            Acceptance {leetcodeData.acceptanceRate} · {leetcodeData.totalSubmissions.toLocaleString()} submissions
           </p>
         </div>
       </div>
 
-      {/* Contest Stats */}
+      {/* Contests */}
       {leetcodeData.contestsAttended > 0 && (
-        <div className="p-5 rounded-2xl bg-zinc-950/60 border border-zinc-800 space-y-4">
-          <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center space-x-1.5">
-            <Trophy className="w-3.5 h-3.5 text-amber-400" />
-            <span>Contest Stats</span>
-          </h3>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-              <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider block">Rating</span>
-              <span className="text-lg font-black text-white">{leetcodeData.contestRating}</span>
-            </div>
-            <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-              <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider block">Global Rank</span>
-              <span className="text-lg font-black text-amber-400">#{leetcodeData.contestGlobalRanking.toLocaleString()}</span>
-            </div>
-            <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-              <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider block">Top</span>
-              <span className="text-lg font-black text-emerald-400">{leetcodeData.contestTopPercentage.toFixed(2)}%</span>
-            </div>
-            <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-              <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider block">Attended</span>
-              <span className="text-lg font-black text-white">{leetcodeData.contestsAttended}</span>
-            </div>
+        <div className="space-y-2">
+          <SectionTitle>Contests</SectionTitle>
+          <div className="grid grid-cols-2 sm:grid-cols-4 rounded-xl bg-[#182f35] divide-x divide-y sm:divide-y-0 divide-[#2e4e50]">
+            {contestStats.map((stat) => (
+              <div key={stat.label} className="p-4 space-y-1">
+                <span className="text-xs text-[#eeece6]/60 block">{stat.label}</span>
+                <span className="text-xl font-semibold text-[#eeece6] tabular-nums">{stat.value}</span>
+              </div>
+            ))}
           </div>
 
           {leetcodeData.contestHistory.length > 0 && (
-            <div className="space-y-2">
-              {leetcodeData.contestHistory.map((c, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between text-xs"
-                >
-                  <div>
-                    <span className="font-bold text-white block">{c.title}</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">
-                      {c.date} • Rank #{c.ranking.toLocaleString()} • {c.problemsSolved}/{c.totalProblems} solved
+            <div className="rounded-xl overflow-hidden bg-[#182f35] divide-y divide-[#2e4e50] text-xs">
+              {leetcodeData.contestHistory.map((c) => (
+                <div key={`${c.title}-${c.date}`} className="px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-[#1f3a40] transition-colors duration-200">
+                  <div className="min-w-0">
+                    <span className="text-[#eeece6] block truncate">{c.title}</span>
+                    <span className="text-[11px] text-[#eeece6]/40">
+                      {c.date} · Rank #{c.ranking.toLocaleString()} · {c.problemsSolved}/{c.totalProblems} solved
                     </span>
                   </div>
                   <span
-                    className={`flex items-center gap-1 font-mono font-bold ${
-                      c.trendDirection === 'UP' ? 'text-emerald-400' : 'text-rose-400'
+                    className={`flex items-center gap-1 tabular-nums shrink-0 ${
+                      c.trendDirection === 'UP' ? 'text-[#2cbb5d]' : 'text-[#ef4743]'
                     }`}
                   >
-                    {c.trendDirection === 'UP' ? (
-                      <TrendingUp className="w-3.5 h-3.5" />
-                    ) : (
-                      <TrendingDown className="w-3.5 h-3.5" />
-                    )}
+                    {c.trendDirection === 'UP' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                     {c.rating}
                   </span>
                 </div>
@@ -204,64 +188,58 @@ export const LeetcodeView: React.FC = () => {
         </div>
       )}
 
-      {/* Submission Timeline */}
-      <div className="p-5 rounded-2xl bg-zinc-950/60 border border-zinc-800 space-y-3 overflow-x-auto">
-        <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-zinc-300">
-          <span className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4 text-amber-400" />
-            <span>{submissionsInPastYear.toLocaleString()} submissions in the past one year</span>
-            <Info className="w-3.5 h-3.5 text-zinc-600" />
+      {/* Submission calendar */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <SectionTitle>{submissionsInPastYear.toLocaleString()} submissions in the past year</SectionTitle>
+          <span
+            className="text-[11px] text-[#eeece6]/60"
+            title="Streaks count days with any LeetCode submission, not LeetCode's Daily Challenge"
+          >
+            Active days {leetcodeData.activeDays} · Max streak {leetcodeData.longestStreak} · Current streak {leetcodeData.streakDays}
           </span>
-          <div className="flex items-center gap-4 text-[11px] text-zinc-400 font-mono">
-            <span>Total active days: <span className="text-zinc-200 font-bold">{leetcodeData.activeDays}</span></span>
-            <span>Max streak: <span className="text-zinc-200 font-bold">{leetcodeData.longestStreak}</span></span>
-          </div>
         </div>
-
-        <div className="flex gap-2.5 pt-2 w-max">
-          {monthGroups.map((group) => (
-            <div key={group.key} className="flex flex-col items-center gap-1">
-              <div className="grid grid-rows-7 grid-flow-col gap-[3px]">
-                {group.days.map((day, i) => (
-                  <div
-                    key={i}
-                    className={`w-2 h-2 rounded-[1px] transition-colors ${getLevelColor(day.level)}`}
-                    title={`${day.date}: ${day.count} submissions`}
-                  />
-                ))}
+        <div className="rounded-xl bg-[#182f35] p-4 overflow-x-auto">
+          <div className="flex gap-2.5 w-max">
+            {monthGroups.map((group) => (
+              <div key={group.key} className="flex flex-col items-center gap-1">
+                <div className="grid grid-rows-7 grid-flow-col gap-[3px]">
+                  {group.days.map((day) => (
+                    <div
+                      key={day.date}
+                      className="w-2.5 h-2.5 rounded-[2px]"
+                      style={{ backgroundColor: LEVEL_COLORS[day.level] }}
+                      title={`${day.date}: ${day.count} submissions`}
+                    />
+                  ))}
+                </div>
+                <span className="text-[10px] text-[#eeece6]/40">{group.label}</span>
               </div>
-              <span className="text-[9px] text-zinc-500 font-mono">{group.label}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Recent AC Feed */}
+      {/* Recent accepted submissions */}
       {leetcodeData.recentSubmissions.length > 0 && (
-        <div className="p-5 rounded-2xl bg-zinc-950/60 border border-zinc-800 space-y-3">
-          <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center space-x-1.5">
-            <Clock className="w-3.5 h-3.5 text-amber-400" />
-            <span>Recent AC</span>
-          </h3>
-
-          <div className="space-y-2">
-            {leetcodeData.recentSubmissions.map((sub, idx) => (
-              <div
-                key={idx}
-                className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between text-xs"
-              >
-                <div className="flex items-center space-x-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <div>
-                    <span className="font-bold text-white block">{sub.title}</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">{timeAgo(sub.timestamp)} • Language: {sub.lang}</span>
-                  </div>
-                </div>
+        <div className="space-y-2">
+          <SectionTitle>Recent AC</SectionTitle>
+          <div className="rounded-xl overflow-hidden bg-[#182f35] divide-y divide-[#2e4e50] text-xs">
+            {leetcodeData.recentSubmissions.map((sub) => (
+              <div key={`${sub.title}-${sub.timestamp}`} className="px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-[#1f3a40] transition-colors duration-200">
+                <span className="flex items-center gap-2 min-w-0">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-[#00b8a3]" />
+                  <span className="text-[#eeece6] truncate">{sub.title}</span>
+                </span>
+                <span className="text-[11px] text-[#eeece6]/40 shrink-0">
+                  {sub.lang} · {timeAgo(sub.timestamp)}
+                </span>
               </div>
             ))}
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

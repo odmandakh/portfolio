@@ -1,32 +1,17 @@
 import React from 'react';
-import {
-  Github,
-  Star,
-  Flame,
-  ExternalLink,
-  Code2,
-  Calendar,
-  Loader2
-} from 'lucide-react';
+import { Github, Star, ExternalLink, Loader2, BookMarked } from 'lucide-react';
 import { profileData } from '../../data/profile';
-import { useGithubStats } from '../../hooks/useGithubStats';
+import { useGithubStats, LANGUAGE_COLORS, DEFAULT_LANGUAGE_COLOR } from '../../hooks/useGithubStats';
+
+// GitHub's contribution greens; the empty cell is blended with the OS surface
+const LEVEL_COLORS = ['#0e2832', '#0e4429', '#006d32', '#26a641', '#39d353'];
 
 export const GithubView: React.FC = () => {
   const { data: githubData, loading, error } = useGithubStats(profileData.githubUsername);
 
-  const getLevelColor = (level: number) => {
-    switch (level) {
-      case 1: return 'bg-emerald-950/80 border border-emerald-800/40';
-      case 2: return 'bg-emerald-700/80';
-      case 3: return 'bg-emerald-500';
-      case 4: return 'bg-emerald-300 shadow-sm shadow-emerald-400/50';
-      default: return 'bg-zinc-800/60';
-    }
-  };
-
   if (loading) {
     return (
-      <div className="p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-zinc-400 gap-2 text-sm font-mono">
+      <div className="min-h-full bg-[#061e26] p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-[#87949a] gap-2 text-sm">
         <Loader2 className="w-5 h-5 animate-spin" />
         <span>Loading live GitHub data...</span>
       </div>
@@ -35,155 +20,126 @@ export const GithubView: React.FC = () => {
 
   if (error || !githubData) {
     return (
-      <div className="p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-rose-400 text-sm font-mono text-center">
+      <div className="min-h-full bg-[#061e26] p-4 sm:p-6 flex items-center justify-center min-h-[400px] text-[#f85149] text-sm text-center">
         Unable to load live GitHub data right now. Please try again later.
       </div>
     );
   }
 
+  const stats = [
+    { label: 'Contributions (last year)', value: githubData.totalContributionsYear.toLocaleString() },
+    { label: 'Current streak', value: `${githubData.currentStreakDays} days` },
+    { label: 'Stars earned', value: githubData.totalStars.toLocaleString() },
+    { label: 'Public repositories', value: githubData.publicRepos.toLocaleString() }
+  ];
+
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto text-zinc-200">
-      {/* Top Header Card */}
-      <div className="p-6 rounded-2xl bg-zinc-950/60 border border-zinc-800 sm:backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-            <Github className="w-8 h-8" />
+    <div className="min-h-full bg-[#061e26] text-[#bcc7ca]">
+      <div className="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto">
+        {/* Profile header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#264a4f]">
+          <div className="flex items-center gap-3">
+            <Github className="w-10 h-10 text-[#efefe8]" />
+            <div>
+              <h2 className="text-xl font-semibold text-[#efefe8] flex items-center gap-2">
+                {githubData.username}
+                <span className="px-2 py-0.5 rounded-full bg-[#264a4f] text-xs font-medium text-[#bcc7ca]">
+                  {githubData.publicRepos}
+                </span>
+              </h2>
+              <p className="text-sm text-[#87949a]">Open source software development & system utilities</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
-              <span>@{githubData.username}</span>
-              <span className="text-xs font-mono font-normal text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
-                {githubData.publicRepos} Repositories
-              </span>
-            </h2>
-            <p className="text-xs text-zinc-400">
-              Open source software development & system utilities
-            </p>
-          </div>
+
+          <a
+            href={`https://github.com/${githubData.username}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-[#142e38] hover:bg-[#1a3a45] border border-[#264a4f] hover:border-[#2aa198]/60 text-xs font-semibold text-[#efefe8] flex items-center gap-2 transition-colors"
+          >
+            View profile
+            <ExternalLink className="w-3.5 h-3.5 text-[#2aa198]" />
+          </a>
         </div>
 
-        <a
-          href={`https://github.com/${githubData.username}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center space-x-2 shadow-lg shadow-emerald-600/20 transition-colors"
-        >
-          <span>View GitHub Profile</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
-      </div>
-
-      {/* GitHub Key Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-4 rounded-2xl bg-zinc-950/40 border border-zinc-800 space-y-1">
-          <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block">
-            Contributions (Year)
-          </span>
-          <span className="text-2xl font-black text-white tracking-tight">
-            {githubData.totalContributionsYear.toLocaleString()}
-          </span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-zinc-950/40 border border-zinc-800 space-y-1">
-          <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block">
-            Current Streak
-          </span>
-          <span className="text-2xl font-black text-amber-400 tracking-tight flex items-center gap-1">
-            <Flame className="w-5 h-5 fill-amber-400" />
-            {githubData.currentStreakDays} days
-          </span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-zinc-950/40 border border-zinc-800 space-y-1">
-          <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block">
-            Total Stars Earned
-          </span>
-          <span className="text-2xl font-black text-emerald-400 tracking-tight">
-            {githubData.totalStars.toLocaleString()}
-          </span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-zinc-950/40 border border-zinc-800 space-y-1">
-          <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block">
-            Public Repos
-          </span>
-          <span className="text-2xl font-black text-blue-400 tracking-tight">
-            {githubData.publicRepos}
-          </span>
-        </div>
-      </div>
-
-      {/* Full 52-Week Heatmap Graph */}
-      <div className="p-5 rounded-2xl bg-zinc-950/60 border border-zinc-800 space-y-3 overflow-x-auto">
-        <div className="flex items-center justify-between text-xs font-semibold text-zinc-300">
-          <span className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4 text-emerald-400" />
-            <span>{githubData.totalContributionsYear.toLocaleString()} contributions in the last year</span>
-          </span>
-          <div className="flex items-center space-x-1 text-[10px] text-zinc-500">
-            <span>Less</span>
-            <span className="w-2.5 h-2.5 rounded-[2px] bg-zinc-800" />
-            <span className="w-2.5 h-2.5 rounded-[2px] bg-emerald-950/80" />
-            <span className="w-2.5 h-2.5 rounded-[2px] bg-emerald-700/80" />
-            <span className="w-2.5 h-2.5 rounded-[2px] bg-emerald-500" />
-            <span className="w-2.5 h-2.5 rounded-[2px] bg-emerald-300" />
-            <span>More</span>
-          </div>
-        </div>
-
-        {/* Heatmap Grid Matrix */}
-        <div className="grid grid-rows-7 grid-flow-col gap-1 w-max pt-2">
-          {githubData.contributionCalendar.map((day, i) => (
-            <div
-              key={i}
-              className={`w-2.5 h-2.5 rounded-[2px] transition-colors ${getLevelColor(day.level)}`}
-              title={`${day.date}: ${day.count} contributions`}
-            />
+        {/* Key stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 rounded-xl bg-[#0e2832]/60 border border-[#264a4f] divide-x divide-y sm:divide-y-0 divide-[#264a4f]">
+          {stats.map((stat) => (
+            <div key={stat.label} className="p-4 space-y-1">
+              <span className="text-xs text-[#87949a] block">{stat.label}</span>
+              <span className="text-2xl font-semibold text-[#efefe8] tabular-nums">{stat.value}</span>
+            </div>
           ))}
         </div>
-      </div>
 
-      {/* Featured Repositories Grid */}
-      {githubData.featuredRepos.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center space-x-1.5">
-            <Code2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Featured Repositories</span>
+        {/* Contribution graph */}
+        <div className="space-y-2">
+          <h3 className="text-base font-normal text-[#efefe8]">
+            {githubData.totalContributionsYear.toLocaleString()} contributions in the last year
           </h3>
-
-          <div className="grid sm:grid-cols-3 gap-3">
-            {githubData.featuredRepos.map((repo, idx) => (
-              <a
-                key={idx}
-                href={repo.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-2xl bg-zinc-950/50 hover:bg-zinc-900/80 border border-zinc-800 hover:border-emerald-500/40 transition-all duration-200 space-y-2 flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-sm text-white group-hover:text-emerald-300 transition-colors truncate">
-                      {repo.name}
-                    </span>
-                    <ExternalLink className="w-3.5 h-3.5 text-zinc-500 group-hover:text-emerald-400 shrink-0" />
-                  </div>
-                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                    {repo.description}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-zinc-400 pt-2 border-t border-zinc-800/80 font-mono">
-                  <span className="text-emerald-400 font-semibold">{repo.language}</span>
-                  <span className="flex items-center text-amber-400">
-                    <Star className="w-3.5 h-3.5 mr-1 fill-amber-400" />
-                    {repo.stars}
-                  </span>
-                </div>
-              </a>
-            ))}
+          <div className="rounded-xl bg-[#0e2832]/60 border border-[#264a4f] p-4 space-y-3 overflow-x-auto">
+            <div className="grid grid-rows-7 grid-flow-col gap-[3px] w-max">
+              {githubData.contributionCalendar.map((day, i) => (
+                <div
+                  key={i}
+                  className="w-2.5 h-2.5 rounded-[2px]"
+                  style={{ backgroundColor: LEVEL_COLORS[day.level] }}
+                  title={`${day.date}: ${day.count} contributions`}
+                />
+              ))}
+            </div>
+            <div className="flex items-center justify-end gap-1 text-xs text-[#87949a]">
+              <span className="mr-1">Less</span>
+              {LEVEL_COLORS.map((color) => (
+                <span key={color} className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: color }} />
+              ))}
+              <span className="ml-1">More</span>
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Popular repositories */}
+        {githubData.featuredRepos.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-base font-normal text-[#efefe8]">Popular repositories</h3>
+            <div className="grid sm:grid-cols-3 gap-4">
+              {githubData.featuredRepos.map((repo) => (
+                <a
+                  key={repo.url}
+                  href={repo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-4 rounded-xl bg-[#0e2832]/60 hover:bg-[#0e2832] border border-[#264a4f] hover:border-[#2aa198]/50 transition-colors duration-200 flex flex-col justify-between gap-3 group"
+                >
+                  <div className="space-y-1.5 min-w-0">
+                    <span className="flex items-center gap-2 min-w-0">
+                      <BookMarked className="w-4 h-4 shrink-0 text-[#87949a]" />
+                      <span className="font-semibold text-sm text-[#358fe5] group-hover:underline truncate">{repo.name}</span>
+                    </span>
+                    {repo.description && (
+                      <p className="text-xs text-[#87949a] line-clamp-2 leading-relaxed">{repo.description}</p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-4 text-xs text-[#87949a]">
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: LANGUAGE_COLORS[repo.language] ?? DEFAULT_LANGUAGE_COLOR }}
+                      />
+                      {repo.language}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5" />
+                      {repo.stars}
+                    </span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
