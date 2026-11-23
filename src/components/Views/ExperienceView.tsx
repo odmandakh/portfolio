@@ -25,7 +25,7 @@ export const ExperienceView: React.FC = () => {
               Career Timeline & Growth
             </h2>
             <p className="text-xs text-[#2aa198]">
-              {experienceWidgetSummary.totalYears}+ Years in Software Engineering & Architecture
+              {experienceWidgetSummary.totalYears} Years in Software Engineering & Architecture
             </p>
           </div>
         </div>

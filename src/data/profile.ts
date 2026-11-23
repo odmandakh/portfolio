@@ -8,7 +8,7 @@ export const profileData: ProfileData = {
   location: 'Ulaanbaatar, Mongolia',
   avatarUrl: '/odmandakh-profile.jpg',
   shortBio: 'Crafting resilient distributed systems, modern web apps, and high-performance cloud infrastructure.',
-  bio: `Software Engineer with ${getYearsOfExperience()}+ years of experience specializing in scalable backend architectures, machine learning solutions, and serverless infrastructure.`,
+  bio: `Software Engineer with ${getYearsOfExperience()} years of experience specializing in scalable backend architectures, machine learning solutions, and serverless infrastructure.`,
   status: 'Available for hire',
   githubUrl: 'https://github.com/odmandakh',
   githubUsername: 'odmandakh',

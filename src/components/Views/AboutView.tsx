@@ -40,7 +40,7 @@ export const AboutView: React.FC = () => {
   const { data: githubStats } = useGithubStats(profileData.githubUsername);
 
   const techStats = [
-    { label: 'Years Experience', value: `${getYearsOfExperience(profileData.careerStartDate)}+` },
+    { label: 'Years Experience', value: getYearsOfExperience(profileData.careerStartDate) },
     { label: 'Shipped Projects', value: `${projectsData.filter((p) => p.status === 'done').length}` },
     { label: 'Certifications', value: `${certificatesData.length}` },
     { label: 'Contributions (Last Year)', value: githubStats ? githubStats.totalContributionsYear.toLocaleString() : '—' }
