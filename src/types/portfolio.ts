@@ -44,32 +44,27 @@ export interface Project {
   folderColor?: string;
 }
 
-export interface SkillNode {
+export type SkillStatus = 'done' | 'learning' | 'planned';
+
+export interface Skill {
   id: string;
   label: string;
-  category: string;
-  branch: 'languages' | 'frameworks' | 'soft_skills';
-  status: 'mastered' | 'learning' | 'planned';
-  tier: number;
-  x: number; // 0 - 100 percentage
-  y: number; // 0 - 100 percentage
-  parentIds: string[];
-  maxPoints: number;
-  defaultPoints: number;
-  level: 'Expert' | 'Experienced' | 'Skillful' | 'Proficient' | 'Planned';
-  years: string;
+  status: SkillStatus;
   description: string;
-  statBonus?: string;
-  iconName: string;
-  relatedSkillIds: string[];
-  projectIds: string[];
+  // Where the skill was actually used: a role, project or certificate
+  usedIn?: string;
 }
 
-export interface SkillCategory {
-  id: 'languages' | 'frameworks' | 'soft_skills';
-  name: string;
+// A branch is a skill area on a tree's trunk; its skills hang off it
+export interface SkillBranch extends Skill {
+  skills: Skill[];
+}
+
+export interface SkillTree {
+  slug: 'backend' | 'machine-learning' | 'software-architect';
+  title: string;
   description: string;
-  color: string;
+  branches: SkillBranch[];
 }
 
 export interface Certificate {
