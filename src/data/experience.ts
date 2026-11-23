@@ -50,7 +50,6 @@ export const experienceData: ExperienceEntry[] = [
     location: 'Mongolia · Hybrid',
     type: 'Full-time',
     current: false,
-    impactMetric: '500M delivery app',
     highlights: [
       'Built 500M, a built-in app in the LendMN ecosystem for delivery from local stores within 500 meters, using React.js with a focus on modularity and responsiveness.',
       'Developed and maintained the admin panel for the LendMN lending site using the Symfony framework, including analytics, reporting, and user management features.',
