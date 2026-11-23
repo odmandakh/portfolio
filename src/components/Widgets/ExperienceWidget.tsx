@@ -12,7 +12,7 @@ export const ExperienceWidget: React.FC<ExperienceWidgetProps> = ({ onClick }) =
   return (
     <button
       onClick={onClick}
-      className="group text-left w-full h-full p-4 rounded-2xl bg-[#073642]/80 hover:bg-[#073642] backdrop-blur-md border border-[#6c71c4]/30 hover:border-[#6c71c4]/60 shadow-xl shadow-[#001f27] transition-all duration-300 flex flex-col justify-between relative overflow-hidden cursor-pointer"
+      className="group text-left w-full h-full p-4 rounded-2xl bg-[#073642] sm:bg-[#073642]/80 hover:bg-[#073642] sm:backdrop-blur-md border border-[#6c71c4]/30 hover:border-[#6c71c4]/60 shadow-xl shadow-[#001f27] transition-all duration-300 flex flex-col justify-between relative overflow-hidden cursor-pointer"
     >
       {/* Header */}
       <div className="flex items-center justify-between z-10 w-full">

@@ -15,7 +15,7 @@ export const GithubWidget: React.FC<GithubWidgetProps> = ({ onClick }) => {
       case 1: return 'bg-[#0e4429] border border-[#006d32]/30';
       case 2: return 'bg-[#006d32] border border-[#26a641]/30';
       case 3: return 'bg-[#26a641]';
-      case 4: return 'bg-[#39d353] shadow-sm shadow-[#39d353]/50';
+      case 4: return 'bg-[#39d353]';
       default: return 'bg-[#161b22] border border-[#21262d]';
     }
   };
@@ -86,7 +86,7 @@ export const GithubWidget: React.FC<GithubWidgetProps> = ({ onClick }) => {
               {recentDays.map((day, i) => (
                 <div
                   key={i}
-                  className={`w-2.5 h-2.5 rounded-[2px] transition-all duration-200 ${getLevelColor(day.level)}`}
+                  className={`w-2.5 h-2.5 rounded-[2px] ${getLevelColor(day.level)}`}
                   title={`${day.date}: ${day.count} contributions`}
                 />
               ))}

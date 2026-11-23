@@ -90,11 +90,17 @@ export default function App() {
       }}
     >
       {/* Background Decorative Ambient Solarized Cyan & Blue Glows */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[300px] bg-[#2aa198]/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/3 right-1/4 w-[500px] h-[300px] bg-[#268bd2]/10 rounded-full blur-[140px]" />
-        <div className="absolute bottom-0 left-1/3 w-[600px] h-[250px] bg-[#6c71c4]/10 rounded-full blur-[160px]" />
-      </div>
+      {/* Rendered with radial gradients instead of filter: blur() — large blurs are very expensive on iOS Safari */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          background: [
+            'radial-gradient(ellipse 600px 320px at 35% 0%, rgba(42, 161, 152, 0.10), transparent 70%)',
+            'radial-gradient(ellipse 520px 320px at 70% 45%, rgba(38, 139, 210, 0.10), transparent 70%)',
+            'radial-gradient(ellipse 620px 280px at 50% 100%, rgba(108, 113, 196, 0.10), transparent 70%)',
+          ].join(', '),
+        }}
+      />
 
       {/* macOS Top Menu Bar */}
       <TopBar
@@ -130,7 +136,7 @@ export default function App() {
 
       {/* macOS Floating Dock Bar - Balanced Solarized Glass */}
       <nav className="relative z-20 py-3 flex items-center justify-center">
-        <div className="bg-[#073642]/80 backdrop-blur-2xl border border-[#2aa198]/30 px-4 py-2 rounded-2xl flex items-center gap-3 shadow-2xl shadow-[#001f27]">
+        <div className="bg-[#073642] sm:bg-[#073642]/80 sm:backdrop-blur-2xl border border-[#2aa198]/30 px-4 py-2 rounded-2xl flex items-center gap-3 shadow-2xl shadow-[#001f27]">
           {desktopItems.filter(i => i.type !== 'widget').map((item) => {
             const getDockColor = () => {
               switch (item.id) {
@@ -186,7 +192,7 @@ export default function App() {
       <div className="fixed bottom-6 right-6 z-30">
         <button
           onClick={() => handleOpenWindow('contact')}
-          className="group relative p-3.5 rounded-full bg-[#859900] hover:bg-[#859900]/90 text-[#002b36] shadow-2xl shadow-[#859900]/30 backdrop-blur-xl border border-[#859900]/60 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer flex items-center justify-center"
+          className="group relative p-3.5 rounded-full bg-[#859900] hover:bg-[#859900]/90 text-[#002b36] shadow-2xl shadow-[#859900]/30 border border-[#859900]/60 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer flex items-center justify-center"
           title="Contact Me"
         >
           <MessageSquare className="w-5 h-5 text-[#002b36] group-hover:scale-110 transition-transform" />

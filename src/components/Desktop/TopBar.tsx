@@ -32,12 +32,20 @@ export const TopBar: React.FC<TopBarProps> = ({
       setDate(now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }));
     };
     updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    // Only minutes are shown, so tick on each minute boundary instead of every second
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const timeout = setTimeout(() => {
+      updateTime();
+      interval = setInterval(updateTime, 60_000);
+    }, 60_000 - (Date.now() % 60_000));
+    return () => {
+      clearTimeout(timeout);
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   return (
-    <header className="relative z-50 h-8 w-full bg-[#002b36]/80 backdrop-blur-md border-b border-[#2aa198]/20 text-[13px] font-medium flex items-center justify-between px-4 select-none text-[#93a1a1]">
+    <header className="relative z-50 h-8 w-full bg-[#002b36] sm:bg-[#002b36]/80 sm:backdrop-blur-md border-b border-[#2aa198]/20 text-[13px] font-medium flex items-center justify-between px-4 select-none text-[#93a1a1]">
       {/* Left Menu Items */}
       <div className="flex items-center gap-5">
         <div className="relative">
@@ -56,7 +64,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                 className="fixed inset-0 z-40" 
                 onClick={() => setShowAppleMenu(false)} 
               />
-              <div className="absolute left-0 mt-1 w-56 bg-[#073642]/95 backdrop-blur-xl border border-[#2aa198]/30 rounded-xl shadow-2xl shadow-[#001f27] z-50 py-1 text-[#93a1a1]">
+              <div className="absolute left-0 mt-1 w-56 bg-[#073642] sm:bg-[#073642]/95 sm:backdrop-blur-xl border border-[#2aa198]/30 rounded-xl shadow-2xl shadow-[#001f27] z-50 py-1 text-[#93a1a1]">
                 <div className="px-3 py-2 border-b border-[#2aa198]/20">
                   <p className="font-semibold text-[#eee8d5]">{profileData.name}</p>
                   <p className="text-[11px] text-[#2aa198] truncate font-mono">{profileData.title}</p>

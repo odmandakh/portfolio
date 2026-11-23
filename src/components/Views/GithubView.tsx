@@ -44,7 +44,7 @@ export const GithubView: React.FC = () => {
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto text-zinc-200">
       {/* Top Header Card */}
-      <div className="p-6 rounded-2xl bg-zinc-950/60 border border-zinc-800 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl bg-zinc-950/60 border border-zinc-800 sm:backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
             <Github className="w-8 h-8" />

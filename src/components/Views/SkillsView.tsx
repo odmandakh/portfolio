@@ -300,7 +300,7 @@ export const SkillsView: React.FC = () => {
   return (
     <div className="flex flex-col h-full min-h-[600px] bg-[#001f27] text-[#93a1a1] overflow-hidden font-sans select-none relative">
       {/* Floating Canvas Top Control Bar Overlay */}
-      <div className="absolute top-4 left-4 z-40 flex items-center space-x-2 bg-[#073642]/90 backdrop-blur border border-[#2aa198]/40 p-1.5 rounded-xl shadow-2xl">
+      <div className="absolute top-4 left-4 z-40 flex items-center space-x-2 bg-[#073642] sm:bg-[#073642]/90 sm:backdrop-blur border border-[#2aa198]/40 p-1.5 rounded-xl shadow-2xl">
         {/* View Mode Toggle Switch */}
         <div className="flex items-center bg-[#002b36] p-0.5 rounded-lg border border-[#2aa198]/30">
           <button
@@ -656,7 +656,7 @@ export const SkillsView: React.FC = () => {
           </div>
 
           {/* Floating Zoom Controls Widget (+ / -) ALWAYS stayed fixed at bottom right */}
-          <div className="absolute bottom-4 right-4 z-50 flex items-center space-x-1.5 bg-[#073642]/95 backdrop-blur border border-[#2aa198]/40 p-1.5 rounded-xl shadow-2xl">
+          <div className="absolute bottom-4 right-4 z-50 flex items-center space-x-1.5 bg-[#073642] sm:bg-[#073642]/95 sm:backdrop-blur border border-[#2aa198]/40 p-1.5 rounded-xl shadow-2xl">
             <button
               onClick={handleZoomOut}
               disabled={zoomLevel <= 0.6}
@@ -680,7 +680,7 @@ export const SkillsView: React.FC = () => {
 
           {/* Right Side Skill Inspector HUD Panel (Floating Overlay) */}
           {activeFocusNode && (
-            <div className="absolute top-16 right-4 bottom-16 z-40 w-80 sm:w-96 bg-[#073642]/95 backdrop-blur p-5 overflow-y-auto space-y-5 custom-scrollbar border border-[#2aa198]/40 rounded-2xl shadow-2xl font-sans text-[#93a1a1]">
+            <div className="absolute top-16 right-4 bottom-16 z-40 w-80 sm:w-96 bg-[#073642] sm:bg-[#073642]/95 sm:backdrop-blur p-5 overflow-y-auto space-y-5 custom-scrollbar border border-[#2aa198]/40 rounded-2xl shadow-2xl font-sans text-[#93a1a1]">
               {/* Header Info */}
               <div className="space-y-2 pb-4 border-b border-[#2aa198]/20 relative">
                 <button

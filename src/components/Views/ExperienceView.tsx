@@ -15,7 +15,7 @@ export const ExperienceView: React.FC = () => {
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-3xl mx-auto text-[#93a1a1]">
       {/* Top Experience Stats Summary */}
-      <div className="p-6 rounded-2xl bg-[#073642] border border-[#2aa198]/30 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl bg-[#073642] border border-[#2aa198]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <div className="p-3 rounded-2xl bg-[#002b36] border border-[#2aa198]/40 text-[#268bd2]">
             <Briefcase className="w-8 h-8 text-[#268bd2]" />

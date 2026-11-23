@@ -84,12 +84,12 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
       }}
       className={`group relative flex flex-col items-center justify-center p-3 rounded-2xl cursor-pointer select-none transition-all duration-200 text-center w-28 sm:w-32 ${
         isSelected 
-          ? 'bg-[#073642]/90 border border-[#2aa198]/60 shadow-xl backdrop-blur-md scale-105' 
+          ? 'bg-[#073642]/90 border border-[#2aa198]/60 shadow-xl sm:backdrop-blur-md scale-105' 
           : 'hover:bg-[#073642]/50 hover:border hover:border-[#073642]'
       }`}
     >
       {/* Icon Frame - Solarized Custom Accent Plate */}
-      <div className={`relative w-16 h-16 rounded-2xl ${config.bg} border flex items-center justify-center backdrop-blur-md mb-2 shadow-lg transition-transform duration-200 group-hover:scale-105 group-active:scale-95`}>
+      <div className={`relative w-16 h-16 rounded-2xl ${config.bg} border flex items-center justify-center sm:backdrop-blur-md mb-2 shadow-lg transition-transform duration-200 group-hover:scale-105 group-active:scale-95`}>
         {config.icon}
         {item.badge && (
           <span className={`absolute -top-1.5 -right-1.5 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full border shadow-sm ${config.badgeBg}`}>
