@@ -47,7 +47,7 @@ export const desktopItems: DesktopItem[] = [
     title: 'Experience',
     type: 'widget',
     icon: 'Briefcase',
-    badge: `${getYearsOfExperience()}+ YOE`,
+    badge: `${getYearsOfExperience()} YOE`,
     description: 'Experience'
   },
   {

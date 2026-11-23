@@ -23,7 +23,7 @@ export const ExperienceWidget: React.FC<ExperienceWidgetProps> = ({ onClick }) =
           <span className="text-xs font-semibold uppercase tracking-wider text-[#6c71c4] font-mono">Experience</span>
         </div>
         <div className="flex items-center text-xs text-[#2aa198] group-hover:translate-x-0.5 transition-transform font-mono font-bold">
-          <span>{experienceWidgetSummary.totalYears}+ YOE</span>
+          <span>{experienceWidgetSummary.totalYears} YOE</span>
           <ChevronRight className="w-3.5 h-3.5 ml-0.5 text-[#2aa198]" />
         </div>
       </div>
